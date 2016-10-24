@@ -1,0 +1,13 @@
+﻿{
+  "tableNumber": 1,
+  "items": [
+    {
+      "description": "beer",
+      "quantity": 1
+    },
+    {
+      "description": "pizza",
+      "quantity": 2
+    }
+  ]
+}
