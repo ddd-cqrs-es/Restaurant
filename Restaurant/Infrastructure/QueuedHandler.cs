@@ -7,17 +7,17 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class QueuedHandler<T> : IHandle<T>, IStartable
+    public class QueuedHandler<T> : IHandler<T>, IStartable
     {
         private readonly ConcurrentQueue<T> _queue;
 
-        private readonly IHandle<T> _handler;
+        private readonly IHandler<T> _handler;
 
         public string Name { get; }
 
         public int QueueLength => _queue.Count;
 
-        public QueuedHandler(string name, IHandle<T> handler)
+        public QueuedHandler(string name, IHandler<T> handler)
         {
             _queue = new ConcurrentQueue<T>();
             _handler = handler;

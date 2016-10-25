@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Restaurant.Workers
 {
-    public class Cook : IOrderHandler
+    public class Cook<T> : IHandler<T> where T : Order
     {
         private static readonly Random Seed = new Random(DateTime.Now.Millisecond);
         private readonly string _name;
@@ -46,7 +46,7 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void HandleOrder(Order order)
+        public void Handle(T order)
         {
             foreach (var item in order.Items)
             {

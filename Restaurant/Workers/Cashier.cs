@@ -8,16 +8,16 @@ using System.Threading;
 
 namespace Restaurant.Workers
 {
-    public class Cashier : IOrderHandler
+    public class Cashier<T> : IHandler<T> where T : Order
     {
-        private readonly ConcurrentDictionary<string, Order> _outstandingOrders = new ConcurrentDictionary<string, Order>();
+        private readonly ConcurrentDictionary<string, T> _outstandingOrders = new ConcurrentDictionary<string, T>();
         private readonly IPublisher _orderPublisher;
 
         public Cashier(IPublisher orderPublisher)
         {
             _orderPublisher = orderPublisher;
         }
-        public void HandleOrder(Order order)
+        public void Handle(T order) 
         {
             _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), order);
         }
@@ -29,7 +29,7 @@ namespace Restaurant.Workers
             var order = _outstandingOrders[orderId];
             order.Paid = true;
 
-            Order removedOrder;
+            T removedOrder;
             _outstandingOrders.TryRemove(orderId, out removedOrder);
             _orderPublisher.Publish(Topics.OrderPaid, order);
         }

@@ -6,9 +6,9 @@ namespace Restaurant.Infrastructure
 {
     public class TTLHandler<T> : IHandle<T> where T: ITTLMessage
     {
-        private readonly IHandle<T> _handler;
+        private readonly IHandler<T> _handler;
 
-        public TTLHandler(IHandle<T> handler)
+        public TTLHandler(IHandler<T> handler)
         {
             _handler = handler;
         }

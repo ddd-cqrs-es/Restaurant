@@ -16,7 +16,7 @@ namespace Restaurant
 
     public class TopicBasedPubSub : IPublisher // instead of IOrderHandler
     {
-        private Dictionary<Topics, List<IOrderHandler>> _subscribers = new Dictionary<Topics, List<IOrderHandler>>();
+        private Dictionary<Topics, List<IHandler<>>> _subscribers = new Dictionary<Topics, List<IHandler<>>>();
         private readonly object _lock = new object();
 
         public void Publish(Topics topic, Order message)
@@ -30,7 +30,7 @@ namespace Restaurant
         // publish<T>(T m)
         // subscribe<T>(Handles<T> h)
 
-        public void Subscribe(Topics topic, IOrderHandler subscriber)
+        public void Subscribe(Topics topic, IHandler<> subscriber)
         {
             lock (_lock)
             {
@@ -44,7 +44,7 @@ namespace Restaurant
                 {
                     subscribers.Add(
                         topic,
-                        new List<IOrderHandler>
+                        new List<IHandler<>>
                         {
                             subscriber
                         });
@@ -88,7 +88,7 @@ namespace Restaurant
             publisher.Subscribe(Topics.OrderReceived, dispatcher);
             publisher.Subscribe(Topics.FoodCooked, assistantManager);
             publisher.Subscribe(Topics.BillProduced, cashier);
-            publisher.Subscribe(Topics.OrderPaid, new OrderPrinter());
+            publisher.Subscribe(Topics.OrderPaid, new Printer());
 
             PlaceOrders(waiter);
 

@@ -2,7 +2,7 @@
 
 namespace Restaurant.Workers.Abstract
 {
-    public interface IHandle<T>
+    public interface IHandler<T>
     {
         void Handle(T message);
     }

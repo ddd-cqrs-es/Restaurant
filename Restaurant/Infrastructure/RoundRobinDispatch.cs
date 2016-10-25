@@ -4,22 +4,22 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class RoundRobinDispatch : IOrderHandler
+    public class RoundRobinDispatch<T> : IHandler<T>
     {
-        private readonly Queue<IOrderHandler> _queue;
+        private readonly Queue<IHandler<T>> _queue;
 
-        public RoundRobinDispatch(IEnumerable<IOrderHandler> orderHandlers)
+        public RoundRobinDispatch(IEnumerable<IHandler<T>> orderHandlers)
         {
-            _queue = new Queue<IOrderHandler>(orderHandlers);
+            _queue = new Queue<IHandler<T>>(orderHandlers);
         }
 
-        public void HandleOrder(Order order)
+        public void Handle(T order)
         {
             var orderHandler = _queue.Dequeue();
 
             try
             {
-                orderHandler.HandleOrder(order);
+                orderHandler.Handle(order);
             }
             finally
             {

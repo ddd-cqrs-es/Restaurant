@@ -5,7 +5,7 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class MFDispatcher<T> : IHandle<T>
+    public class MFDispatcher<T> : IHandler<T>
     {
         private readonly IEnumerable<QueuedHandler<T>> _queuedHandlers;
 

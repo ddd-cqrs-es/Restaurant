@@ -4,20 +4,20 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class FanOut : IOrderHandler
+    public class FanOut<T> : IHandler<T>
     {
-        private readonly IEnumerable<IOrderHandler> _orderHandlers;
+        private readonly IEnumerable<IHandler<T>> _orderHandlers;
 
-        public FanOut(IEnumerable<IOrderHandler> orderHandlers)
+        public FanOut(IEnumerable<IHandler<T>> orderHandlers)
         {
             _orderHandlers = orderHandlers;
         }
 
-        public void HandleOrder(Order order)
+        public void Handle(T order)
         {
             foreach (var orderHandler in _orderHandlers)
             {
-                orderHandler.HandleOrder(order);
+                orderHandler.Handle(order);
             }
         }
     }

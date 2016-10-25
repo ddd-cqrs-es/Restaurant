@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Restaurant.Workers
 {
-    public class AssistantManager : IOrderHandler
+    public class AssistantManager : IHandler<>
     {
         private readonly IPublisher _orderPublisher;
         private readonly Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
