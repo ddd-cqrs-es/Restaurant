@@ -12,18 +12,23 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant
 {
+    // cook -> handles<T> -> void handle(T)
+
     public class TopicBasedPubSub : IPublisher // instead of IOrderHandler
     {
         private Dictionary<Topics, List<IOrderHandler>> _subscribers = new Dictionary<Topics, List<IOrderHandler>>();
         private readonly object _lock = new object();
 
-        public void Publish(Topics topic, Order order)
+        public void Publish(Topics topic, Order message)
         {
             foreach (var subscriber in _subscribers[topic])
             {
-                subscriber.HandleOrder(order);
+                subscriber.HandleOrder(message);
             }
         }
+
+        // publish<T>(T m)
+        // subscribe<T>(Handles<T> h)
 
         public void Subscribe(Topics topic, IOrderHandler subscriber)
         {
@@ -52,18 +57,17 @@ namespace Restaurant
 
     public interface IPublisher
     {
-        void Publish(Topics topic, Order order);
+        void Publish(Topics topic, Order message);
     }
 
     internal class Program
     {
         private static void Main()
         {
-     
             var publisher = new TopicBasedPubSub();
 
             var cashier = new Cashier(publisher);
-            var cashierQueue = new QueuedHandler("cashier", cashier);
+            var cashierQueue = new QueuedHandler("Cashier", cashier);
             var assistantManager = new QueuedHandler("AssistantManager", new AssistantManager(publisher));
             var cooks = GetCooks(publisher);
             var dispatcher = new QueuedHandler("MFDispatcher", new TTLHandler(new MFDispatcher(cooks)));
@@ -85,7 +89,6 @@ namespace Restaurant
             publisher.Subscribe(Topics.FoodCooked, assistantManager);
             publisher.Subscribe(Topics.BillProduced, cashier);
             publisher.Subscribe(Topics.OrderPaid, new OrderPrinter());
-
 
             PlaceOrders(waiter);
 
