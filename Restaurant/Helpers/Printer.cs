@@ -6,9 +6,9 @@ namespace Restaurant.Helpers
 {
     public class Printer<T> : IHandler<T> where T : Order
     {
-        public void Handle(T order)
+        public void Handle(T orderCooked)
         {
-            Console.WriteLine(order.ToJsonString());
+            Console.WriteLine(orderCooked.ToJsonString());
         }
     }
 }

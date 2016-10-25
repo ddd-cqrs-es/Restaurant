@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Restaurant.Events;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Abstract;
 using Restaurant.Models;
@@ -16,22 +17,22 @@ namespace Restaurant
         private static void Main()
         {
             var publisher = new TopicBasedPubSub();
-
-            var cashier = new Cashier<Order>(publisher);
+            
+            var cashier = new Cashier(publisher);
             var cashierQueue = new QueuedHandler<Order>("Cashier", cashier);
-            var assistantManager = new QueuedHandler<Order>("AssistantManager", new AssistantManager<Order>(publisher));
+            var assistantManager = new QueuedHandler<Order>("AssistantManager", new AssistantManager(publisher));
 
             var seed = new Random(DateTime.Now.Millisecond);
 
             var cook1 = new QueuedHandler<Order>(
                 "Bogdan",
-                new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Bogdan", publisher)));
+                new TTLHandler<Order>(new Cook(seed.Next(1000), "Bogdan", publisher)));
             var cook2 = new QueuedHandler<Order>(
                 "Roman",
-                new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Roman", publisher)));
+                new TTLHandler<Order>(new Cook(seed.Next(1000), "Roman", publisher)));
             var cook3 = new QueuedHandler<Order>(
                 "Waclaw",
-                new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Waclaw", publisher)));
+                new TTLHandler<Order>(new Cook(seed.Next(1000), "Waclaw", publisher)));
 
             var dispatcher = new QueuedHandler<Order>("MFDispatcher", new TTLHandler<Order>(new MFDispatcher<Order>(new List<QueuedHandler<Order>> { cook1, cook2, cook3 })));
 
@@ -76,7 +77,7 @@ namespace Restaurant
 
             var cooks = new List<QueuedHandler<T>>
             {
-                new QueuedHandler<T>("Bogdan", new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Bogdan", publisher))),
+                new QueuedHandler<T>("Bogdan", new TTLHandler<Order>(new Cook(seed.Next(1000), "Bogdan", publisher))),
                 new QueuedHandler<T>("Roman", new TTLHandler<Order>(new Cook(seed.Next(1000), "Roman", publisher))),
                 new QueuedHandler<T>("Waclaw", new TTLHandler<Order>(new Cook(seed.Next(1000), "Waclaw", publisher)))
             };
@@ -84,7 +85,7 @@ namespace Restaurant
             return cooks;
         }
 
-        private static void HandlePays(Cashier<Order> cashier)
+        private static void HandlePays(Cashier cashier)
         {
             Task.Run(
                 () =>

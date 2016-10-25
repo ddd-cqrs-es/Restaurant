@@ -5,22 +5,23 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class Cashier<T> : IHandler<T> where T : Order
+    public class Cashier : IHandler<OrderPriced>
     {
-        private readonly ConcurrentDictionary<string, T> _outstandingOrders = new ConcurrentDictionary<string, T>();
+        private readonly ConcurrentDictionary<string, Order> _outstandingOrders = new ConcurrentDictionary<string, Order>();
         private readonly IPublisher _orderPublisher;
 
         public Cashier(IPublisher orderPublisher)
         {
             _orderPublisher = orderPublisher;
         }
-        public void Handle(T order) 
+        public void Handle(OrderPriced orderCooked) 
         {
-            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), order);
+            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), orderCooked.Order);
         }
 
         public void Pay(string orderId)
@@ -30,7 +31,7 @@ namespace Restaurant.Workers
             var order = _outstandingOrders[orderId];
             order.Paid = true;
 
-            T removedOrder;
+            Order removedOrder;
             _outstandingOrders.TryRemove(orderId, out removedOrder);
             _orderPublisher.Publish(Topics.OrderPaid, order);
         }

@@ -25,9 +25,9 @@ namespace Restaurant.Infrastructure
             Name = name;
         }
 
-        public void Handle(T message)
+        public void Handle(T orderCooked)
         {
-            _queue.Enqueue(message);
+            _queue.Enqueue(orderCooked);
         }
 
         public async void Start()
