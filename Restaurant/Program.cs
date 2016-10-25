@@ -24,15 +24,15 @@ namespace Restaurant
 
             var seed = new Random(DateTime.Now.Millisecond);
 
-            var cook1 = new QueuedHandler<OrderCooked>(
+            var cook1 = new QueuedHandler<OrderPlaced>(
                 "Bogdan",
-                new TTLHandler<OrderCooked>(new Cook(seed.Next(1000), "Bogdan", publisher)));
-            var cook2 = new QueuedHandler<OrderCooked>(
+                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Bogdan", publisher)));
+            var cook2 = new QueuedHandler<OrderPlaced>(
                 "Roman",
-                new TTLHandler<OrderCooked>(new Cook(seed.Next(1000), "Roman", publisher)));
-            var cook3 = new QueuedHandler<OrderCooked>(
+                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Roman", publisher)));
+            var cook3 = new QueuedHandler<OrderPlaced>(
                 "Waclaw",
-                new TTLHandler<OrderCooked>(new Cook(seed.Next(1000), "Waclaw", publisher)));
+                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Waclaw", publisher)));
 
             var dispatcher = new QueuedHandler<Order>("MFDispatcher", new TTLHandler<Order>(new MFDispatcher<Order>(new List<QueuedHandler<Order>> { cook1, cook2, cook3 })));
 
