@@ -47,20 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\Getter.cs" />
+    <Compile Include="Helpers\OrderPrinter.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderItem.cs" />
+    <Compile Include="Models\Recipe.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Workers\Abstract\IOrderHandler.cs" />
+    <Compile Include="Workers\AssistantManager.cs" />
+    <Compile Include="Workers\Cashier.cs" />
+    <Compile Include="Workers\Cook.cs" />
+    <Compile Include="Workers\Waiter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Order2.json" />
-    <None Include="Order1.json" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Restaurant.Tests\Restaurant.Tests.csproj">
-      <Project>{86301F05-B31F-44A4-84C3-D72A3A2865F2}</Project>
-      <Name>Restaurant.Tests</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
