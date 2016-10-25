@@ -7,35 +7,36 @@ namespace Restaurant.Infrastructure
 {
     public class TopicBasedPubSub : IPublisher // instead of IOrderHandler
     {
-        private Dictionary<Topics, List<IHandler<>>> _subscribers = new Dictionary<Topics, List<IHandler<>>>();
+        private Dictionary<string, List<dynamic>> _subscribers = new Dictionary<string, List<dynamic>>();
         private readonly object _lock = new object();
 
-        public void Publish(Topics topic, Order message)
+        public void Publish<T>(T message)
         {
-            foreach (var subscriber in _subscribers[topic])
+            foreach (var subscriber in _subscribers[typeof(T).ToString()])
             {
-                subscriber.HandleOrder(message);
+                subscriber.Handle(message);
             }
         }
 
         // publish<T>(T m)
         // subscribe<T>(Handles<T> h)
 
-        public void Subscribe(Topics topic, IHandler<> subscriber)
+        public void Subscribe<T>(IHandler<T> subscriber)
         {
             lock (_lock)
             {
-                var subscribers = _subscribers;
+                var subscribers = 
+                    new Dictionary<string, List<dynamic>>(_subscribers);
 
-                if (subscribers.ContainsKey(topic))
+                if (subscribers.ContainsKey(typeof(T).ToString()))
                 {
-                    subscribers[topic].Add(subscriber);
+                    subscribers[typeof(T).ToString()].Add(subscriber);
                 }
                 else
                 {
                     subscribers.Add(
-                        topic,
-                        new List<IHandler<>>
+                        typeof(T).ToString(),
+                        new List<dynamic>
                         {
                             subscriber
                         });
