@@ -13,13 +13,13 @@ namespace Restaurant.Infrastructure
             _queue = new Queue<IHandler<T>>(orderHandlers);
         }
 
-        public void Handle(T orderCooked)
+        public void Handle(T orderPaid)
         {
             var orderHandler = _queue.Dequeue();
 
             try
             {
-                orderHandler.Handle(orderCooked);
+                orderHandler.Handle(orderPaid);
             }
             finally
             {

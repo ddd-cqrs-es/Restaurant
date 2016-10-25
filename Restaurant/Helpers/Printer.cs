@@ -1,15 +1,14 @@
-﻿using Restaurant.Models;
-using Restaurant.Workers.Abstract;
+﻿using Restaurant.Workers.Abstract;
 using System;
 using Restaurant.Events;
 
 namespace Restaurant.Helpers
 {
-    public class Printer : IHandler<OrderCooked>
+    public class Printer : IHandler<OrderPaid>
     {
-        public void Handle(OrderCooked orderCooked)
+        public void Handle(OrderPaid orderPaid)
         {
-            Console.WriteLine(orderCooked.Order.ToJsonString());
+            Console.WriteLine(orderPaid.Order.ToJsonString());
         }
     }
 }

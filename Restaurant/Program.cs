@@ -35,15 +35,20 @@ namespace Restaurant
 
             var dispatcher = new QueuedHandler<OrderPlaced>("MFDispatcher", new TTLHandler<OrderPlaced>(new MFDispatcher<OrderPlaced>(new List<QueuedHandler<OrderPlaced>> { cook1, cook2, cook3 })));
 
-            //var queues = new List<QueuedHandler<Event>>
-            //{
-            //    assistantManager,
-            //    cashierQueue,
-            //    dispatcher,
-            //    cook1,
-            //    cook2,
-            //    cook3
-            //};
+            Task.Run(
+                () =>
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(500);
+                        Console.WriteLine($"{assistantManager.Name} - {assistantManager.QueueLength}");
+                        Console.WriteLine($"{cashierQueue.Name} - {cashierQueue.QueueLength}");
+                        Console.WriteLine($"{dispatcher.Name} - {dispatcher.QueueLength}");
+                        Console.WriteLine($"{cook1.Name} - {cook1.QueueLength}");
+                        Console.WriteLine($"{cook2.Name} - {cook2.QueueLength}");
+                        Console.WriteLine($"{cook3.Name} - {cook3.QueueLength}");
+                    }
+                });
 
             assistantManager.Start();
             cashierQueue.Start();

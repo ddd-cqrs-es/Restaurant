@@ -2,8 +2,8 @@
 
 namespace Restaurant.Workers.Abstract
 {
-    public interface IHandler<T>
+    public interface IHandler<in T>
     {
-        void Handle(T orderCooked);
+        void Handle(T orderPaid);
     }
 }
