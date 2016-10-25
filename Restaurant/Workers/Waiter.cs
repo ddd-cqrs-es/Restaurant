@@ -8,8 +8,8 @@ namespace Restaurant.Workers
 {
     public class Waiter
     {
-        private IOrderHandler _orderHandler;
-        private Dictionary<string, decimal> _menu = new Dictionary<string, decimal>
+        private readonly IOrderHandler _orderHandler;
+        private readonly Dictionary<string, decimal> _menu = new Dictionary<string, decimal>
         {
             {"pizza", 9m },
             {"pasta", 11m },
@@ -26,19 +26,21 @@ namespace Restaurant.Workers
         {
             Thread.Sleep(100);
 
-            var order = new Order();
-            order.TableNumber = tableNumber;
+            var order = new Order
+            {
+                TableNumber = tableNumber,
+                Items = items
+                    .GroupBy(item => item)
+                    .Select(
+                        itemGroup => new OrderItem()
+                        {
+                            Description = itemGroup.Key,
+                            Price = _menu[itemGroup.Key],
+                            Quantity = items.Count(item => item == itemGroup.Key)
+                        })
+                    .ToList()
+            };
 
-            order.Items = items
-                .GroupBy(item => item)
-                .Select(itemGroup => new OrderItem()
-                {
-                    Description = itemGroup.Key,
-                    Price = _menu[itemGroup.Key],
-                    Quantity = items.Count(item => item == itemGroup.Key)
-                })
-                .ToList();
-            
             _orderHandler.HandleOrder(order);
         }
     }

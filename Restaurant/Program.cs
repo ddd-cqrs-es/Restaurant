@@ -22,14 +22,14 @@ namespace Restaurant
             waiter.PlaceOrder(2, new List<string> { "beer", "beer", "beer", "beer" });
             waiter.PlaceOrder(3, new List<string> { "pizza", "pizza", "pizza", "pizza", "pasta", "pasta", "pasta", "pasta", "wine", "wine", "wine", "wine", "wine", "wine" });
 
-            var unpaidOrders = cashier.GetOutstandingOrders();
+            var unpaidOrders = cashier.GetOutstandingOrders().ToList();
             foreach (var orderId in unpaidOrders)
             {
                 Console.WriteLine("paying for {0}\n", orderId);
                 cashier.Pay(orderId);
             }
 
-            Console.WriteLine($"Processing {unpaidOrders.ToList().Count} orders took: {TimeSpan.FromMilliseconds(stopWatch.ElapsedMilliseconds)}");
+            Console.WriteLine($"Processing {unpaidOrders.Count} orders took: {TimeSpan.FromMilliseconds(stopWatch.ElapsedMilliseconds)}");
             stopWatch.Stop();
             Console.ReadKey();
         }

@@ -5,7 +5,7 @@ namespace Restaurant.Models
 {
     public class OrderItem
     {
-        private dynamic _json;
+        private readonly dynamic _json;
 
         public OrderItem()
         {
@@ -19,19 +19,19 @@ namespace Restaurant.Models
 
         public string Description
         {
-            get { return Getter.TryGet<string>(() => { return _json.description; }); }
+            get { return Getter.TryGet<string>(() => _json.description); }
             set { _json.description = JToken.FromObject(value); }
         }
 
         public int Quantity
         {
-            get { return Getter.TryGet<int>(() => { return _json.quantity; }); }
+            get { return Getter.TryGet<int>(() => _json.quantity); }
             set { _json.quantity = value; }
         }
 
         public decimal Price
         {
-            get { return Getter.TryGet<decimal>(() => { return _json.price; }); }
+            get { return Getter.TryGet<decimal>(() => _json.price); }
             set { _json.price = value; }
         }
     }

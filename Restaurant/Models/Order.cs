@@ -9,42 +9,42 @@ namespace Restaurant.Models
 {
     public class Order
     {
-        private JsonSerializer _serializer = new JsonSerializer()
+        private readonly JsonSerializer _serializer = new JsonSerializer()
         {
             Formatting = Formatting.None,
             StringEscapeHandling = StringEscapeHandling.Default,
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
-        private dynamic _jsonOrder;
+        private readonly dynamic _jsonOrder;
 
         public int TableNumber
         {
-            get { return Getter.TryGet<int>(() => { return _jsonOrder.tableNumber; }); }
+            get { return Getter.TryGet<int>(() => _jsonOrder.tableNumber); }
             set { _jsonOrder.tableNumber = value; }
         }
 
         public int TimeToCookMs
         {
-            get { return Getter.TryGet<int>(() => { return _jsonOrder.timeToCookMs; }); }
+            get { return Getter.TryGet<int>(() => _jsonOrder.timeToCookMs); }
             set { _jsonOrder.timeToCookMs = value; }
         }
 
         public decimal Tax
         {
-            get { return Getter.TryGet<decimal>(() => { return _jsonOrder.tax; }); }
+            get { return Getter.TryGet<decimal>(() => _jsonOrder.tax); }
             set { _jsonOrder.tax = value; }
         }
 
         public decimal Total
         {
-            get { return Getter.TryGet<decimal>(() => { return _jsonOrder.total; }); }
+            get { return Getter.TryGet<decimal>(() => _jsonOrder.total); }
             set { _jsonOrder.total = value; }
         }
 
         public bool Paid
         {
-            get { return Getter.TryGet<bool>(() => { return _jsonOrder.paid; }); }
+            get { return Getter.TryGet<bool>(() => _jsonOrder.paid); }
             set { _jsonOrder.paid = value; }
         }
         

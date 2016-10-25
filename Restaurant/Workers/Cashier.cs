@@ -9,8 +9,8 @@ namespace Restaurant.Workers
 {
     public class Cashier : IOrderHandler
     {
-        private Dictionary<string, Order> _outstandingOrders = new Dictionary<string, Order>();
-        private IOrderHandler _orderHandler;
+        private readonly Dictionary<string, Order> _outstandingOrders = new Dictionary<string, Order>();
+        private readonly IOrderHandler _orderHandler;
 
         public Cashier(IOrderHandler orderHandler)
         {

@@ -8,8 +8,8 @@ namespace Restaurant.Workers
 {
     public class Cook : IOrderHandler
     {
-        private IOrderHandler _orderHandler;
-        private Recipe[] _cookBook = new[] {
+        private readonly IOrderHandler _orderHandler;
+        private readonly Recipe[] _cookBook = {
             new Recipe
             {
                 TimeToPrepare = 50,

@@ -8,7 +8,7 @@ namespace Restaurant.Tests
 {
     public class OrderTests
     {
-        private string json = @"{
+        private const string Json = @"{
             tableNumber: 17, 
             items: [{description:""razor balde apple"", quantity: 3, price: 9.00}], 
             ingredients: [""foo"", ""bar""],
@@ -20,7 +20,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldNotMapUknownProperties()
         {
-            string json = @"{
+            const string json = @"{
             tableNumber: 17, 
             items: [{description:""razor balde apple"", quantity: 3, price: 9.00}], 
             ingredients: [""foo"", ""bar""],
@@ -38,7 +38,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldJsonWithoutItemsToEmptyList()
         {
-            string json = @"{
+            const string json = @"{
             tableNumber: 17, 
             ingredients: [""foo"", ""bar""],
             timeToCookMs: 300, 
@@ -53,7 +53,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetTimeTable()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.TableNumber.ShouldEqual(17);
         }
@@ -61,9 +61,11 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldSetTimeTable()
         {
-            var order = new Order();
+            var order = new Order
+            {
+                TableNumber = 17
+            };
 
-            order.TableNumber = 17;
             order.TableNumber.ShouldEqual(17);
         }
 
@@ -126,7 +128,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetTimeToCookMs()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.TimeToCookMs.ShouldEqual(300);
         }
@@ -134,9 +136,10 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldSetTimeToCookMs()
         {
-            var order = new Order();
-
-            order.TimeToCookMs = 300;
+            var order = new Order
+            {
+                TimeToCookMs = 300
+            };
 
             order.TimeToCookMs.ShouldEqual(300);
         }
@@ -144,7 +147,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetTax()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.Tax.ShouldEqual(2.00m);
         }
@@ -152,9 +155,10 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldSetTax()
         {
-            var order = new Order(json);
-
-            order.Tax = 2.00m;
+            var order = new Order(Json)
+            {
+                Tax = 2.00m
+            };
 
             order.Tax.ShouldEqual(2.00m);
         }
@@ -162,7 +166,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetTotal()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.Total.ShouldEqual(11.00m);
         }
@@ -170,7 +174,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldSetTotal()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.Total = 11.00m;
 
@@ -180,7 +184,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetPaid()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.Paid.ShouldEqual(true);
         }
@@ -188,9 +192,10 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldSetPaid()
         {
-            var order = new Order(json);
-
-            order.Paid = true;
+            var order = new Order(Json)
+            {
+                Paid = true
+            };
 
             order.Paid.ShouldEqual(true);
         }
@@ -198,7 +203,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetOrderItems()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.Items.Count.ShouldEqual(1);
             order.Items[0].Description.ShouldEqual("razor balde apple");
@@ -209,7 +214,7 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldGetIngredients()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
 
             order.Ingredients.Count.ShouldEqual(2);
             order.Ingredients[0].ShouldEqual("foo");
@@ -219,11 +224,13 @@ namespace Restaurant.Tests
         [Fact]
         public void ShouldChangeDescription()
         {
-            var order = new Order(json);
+            var order = new Order(Json);
+            
+            var orderItems = order.Items.ToList();
+            orderItems[0].Description = "new description";
+            order.Items = orderItems;
 
-            order.Items[0].Description = "new description";
-
-            order.Items[0].Description.SequenceEqual("new description");
+            order.Items[0].Description.ShouldEqual("new description");
         }
     }
 }

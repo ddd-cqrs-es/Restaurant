@@ -8,8 +8,8 @@ namespace Restaurant.Workers
 {
     public class AssistantManager : IOrderHandler
     {
-        private IOrderHandler _orderHandler;
-        private Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
+        private readonly IOrderHandler _orderHandler;
+        private readonly Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
         {
             {"pizza", 2m },
             {"pasta", 3m },
