@@ -24,15 +24,15 @@ namespace Restaurant
 
             var seed = new Random(DateTime.Now.Millisecond);
 
-            var cook1 = new QueuedHandler<Order>(
+            var cook1 = new QueuedHandler<OrderCooked>(
                 "Bogdan",
-                new TTLHandler<Order>(new Cook(seed.Next(1000), "Bogdan", publisher)));
-            var cook2 = new QueuedHandler<Order>(
+                new TTLHandler<OrderCooked>(new Cook(seed.Next(1000), "Bogdan", publisher)));
+            var cook2 = new QueuedHandler<OrderCooked>(
                 "Roman",
-                new TTLHandler<Order>(new Cook(seed.Next(1000), "Roman", publisher)));
-            var cook3 = new QueuedHandler<Order>(
+                new TTLHandler<OrderCooked>(new Cook(seed.Next(1000), "Roman", publisher)));
+            var cook3 = new QueuedHandler<OrderCooked>(
                 "Waclaw",
-                new TTLHandler<Order>(new Cook(seed.Next(1000), "Waclaw", publisher)));
+                new TTLHandler<OrderCooked>(new Cook(seed.Next(1000), "Waclaw", publisher)));
 
             var dispatcher = new QueuedHandler<Order>("MFDispatcher", new TTLHandler<Order>(new MFDispatcher<Order>(new List<QueuedHandler<Order>> { cook1, cook2, cook3 })));
 
@@ -51,10 +51,10 @@ namespace Restaurant
 
             var waiter = new Waiter(publisher);
 
-            publisher.Subscribe(Topics.OrderReceived, dispatcher);
-            publisher.Subscribe(Topics.FoodCooked, assistantManager);
-            publisher.Subscribe(Topics.BillProduced, cashier);
-            publisher.Subscribe(Topics.OrderPaid, new Printer());
+            publisher.Subscribe(dispatcher);
+            publisher.Subscribe(assistantManager);
+            publisher.Subscribe(cashier);
+            publisher.Subscribe(new Printer());
 
             PlaceOrders(waiter);
 
@@ -70,21 +70,7 @@ namespace Restaurant
                 ((IStartable)queue).Start();
             }
         }
-
-        private static List<QueuedHandler<T>> GetCooks<T>(IPublisher publisher)
-        {
-            var seed = new Random(DateTime.Now.Millisecond);
-
-            var cooks = new List<QueuedHandler<T>>
-            {
-                new QueuedHandler<T>("Bogdan", new TTLHandler<Order>(new Cook(seed.Next(1000), "Bogdan", publisher))),
-                new QueuedHandler<T>("Roman", new TTLHandler<Order>(new Cook(seed.Next(1000), "Roman", publisher))),
-                new QueuedHandler<T>("Waclaw", new TTLHandler<Order>(new Cook(seed.Next(1000), "Waclaw", publisher)))
-            };
-
-            return cooks;
-        }
-
+        
         private static void HandlePays(Cashier cashier)
         {
             Task.Run(
