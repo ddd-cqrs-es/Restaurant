@@ -2,7 +2,7 @@
 
 namespace Restaurant.Infrastructure
 {
-    public interface ITTLHandler
+    public interface ITTLMessage
     {
         DateTime ShoulBeProcessesdBefore { get; }
     }

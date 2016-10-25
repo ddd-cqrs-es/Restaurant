@@ -5,10 +5,11 @@ using Newtonsoft.Json.Serialization;
 using Restaurant.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using Restaurant.Infrastructure;
 
 namespace Restaurant.Models
 {
-    public class Order
+    public class Order: ITTLMessage
     {
         private readonly JsonSerializer _serializer = new JsonSerializer()
         {

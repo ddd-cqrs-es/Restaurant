@@ -7,9 +7,9 @@ namespace Restaurant.Infrastructure
 {
     public class MFDispatcher<T> : IHandle<T>
     {
-        private readonly IEnumerable<QueuedHandler> _queuedHandlers;
+        private readonly IEnumerable<QueuedHandler<T>> _queuedHandlers;
 
-        public MFDispatcher(IEnumerable<QueuedHandler> queuedHandlers)
+        public MFDispatcher(IEnumerable<QueuedHandler<T>> queuedHandlers)
         {
             _queuedHandlers = queuedHandlers;
         }
@@ -25,7 +25,7 @@ namespace Restaurant.Infrastructure
                     if (queuedHandler.QueueLength < 5)
                     {
                         managedToDispatch = true;
-                        queuedHandler.Handle(T);
+                        queuedHandler.Handle(message);
                     }
                 }
 
