@@ -11,8 +11,6 @@ using Restaurant.Models;
 
 namespace Restaurant
 {
-    // cook -> handles<T> -> void handle(T)
-
     public interface IPublisher
     {
         void Publish(Topics topic, Order message);
@@ -24,23 +22,37 @@ namespace Restaurant
         {
             var publisher = new TopicBasedPubSub();
 
-            var cashier = new Cashier(publisher);
-            var cashierQueue = new QueuedHandler("Cashier", cashier);
-            var assistantManager = new QueuedHandler("AssistantManager", new AssistantManager(publisher));
-            var cooks = GetCooks(publisher);
-            var dispatcher = new QueuedHandler("MFDispatcher", new TTLHandler(new MFDispatcher(cooks)));
+            var cashier = new Cashier<Order>(publisher);
+            var cashierQueue = new QueuedHandler<Order>("Cashier", cashier);
+            var assistantManager = new QueuedHandler<Order>("AssistantManager", new AssistantManager<Order>(publisher));
 
-            var queues = new List<QueuedHandler>
+            var seed = new Random(DateTime.Now.Millisecond);
+
+            var cook1 = new QueuedHandler<Order>(
+                "Bogdan",
+                new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Bogdan", publisher)));
+            var cook2 = new QueuedHandler<Order>(
+                "Roman",
+                new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Roman", publisher)));
+            var cook3 = new QueuedHandler<Order>(
+                "Waclaw",
+                new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Waclaw", publisher)));
+
+            var dispatcher = new QueuedHandler<Order>("MFDispatcher", new TTLHandler<Order>(new MFDispatcher<Order>(new List<QueuedHandler<Order>> { cook1, cook2, cook3 })));
+
+            var queues = new List<QueuedHandler<Order>>
             {
                 assistantManager,
                 cashierQueue,
-                dispatcher
+                dispatcher,
+                cook1,
+                cook2,
+                cook3
             };
-            queues.AddRange(cooks);
-            
+
             StartQueues(queues);
             StartQueuePrinter(queues);
-            
+
             var waiter = new Waiter(publisher);
 
             publisher.Subscribe(Topics.OrderReceived, dispatcher);
@@ -55,7 +67,7 @@ namespace Restaurant
             Console.ReadKey();
         }
 
-        private static void StartQueues(List<QueuedHandler> queues)
+        private static void StartQueues<T>(List<QueuedHandler<T>> queues)
         {
             foreach (var queue in queues)
             {
@@ -63,21 +75,21 @@ namespace Restaurant
             }
         }
 
-        private static List<QueuedHandler> GetCooks(IPublisher publisher)
+        private static List<QueuedHandler<T>> GetCooks<T>(IPublisher publisher)
         {
             var seed = new Random(DateTime.Now.Millisecond);
 
-            var cooks = new List<QueuedHandler>
+            var cooks = new List<QueuedHandler<T>>
             {
-                new QueuedHandler("Bogdan", new TTLHandler(new Cook(seed.Next(1000), "Bogdan", publisher))),
-                new QueuedHandler("Roman", new TTLHandler(new Cook(seed.Next(1000), "Roman", publisher))),
-                new QueuedHandler("Waclaw", new TTLHandler(new Cook(seed.Next(1000), "Waclaw", publisher)))
+                new QueuedHandler<T>("Bogdan", new TTLHandler<Order>(new Cook<Order>(seed.Next(1000), "Bogdan", publisher))),
+                new QueuedHandler<T>("Roman", new TTLHandler<Order>(new Cook(seed.Next(1000), "Roman", publisher))),
+                new QueuedHandler<T>("Waclaw", new TTLHandler<Order>(new Cook(seed.Next(1000), "Waclaw", publisher)))
             };
 
             return cooks;
         }
 
-        private static void HandlePays(Cashier cashier)
+        private static void HandlePays(Cashier<Order> cashier)
         {
             Task.Run(
                 () =>
@@ -95,7 +107,7 @@ namespace Restaurant
                 });
         }
 
-        private static void StartQueuePrinter(List<QueuedHandler> queues)
+        private static void StartQueuePrinter(List<QueuedHandler<Order>> queues)
         {
             Task.Run(
                 () =>
