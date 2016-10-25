@@ -4,11 +4,12 @@ using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class Cook<T> : IHandler<T> where T : Order
+    public class Cook : IHandler<OrderCooked>
     {
         private static readonly Random Seed = new Random(DateTime.Now.Millisecond);
         private readonly string _name;
@@ -47,9 +48,9 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void Handle(T order)
+        public void Handle(OrderCooked orderCooked)
         {
-            foreach (var item in order.Items)
+            foreach (var item in orderCooked.Order.Items)
             {
                 var recipe = _cookBook.SingleOrDefault(c => c.DishName == item.Description);
 
@@ -60,11 +61,11 @@ namespace Restaurant.Workers
                 
                 Thread.Sleep(_time);
 
-                order.AddIngredients(recipe.Ingredients);
-                order.TimeToCookMs += _time;
+                orderCooked.Order.AddIngredients(recipe.Ingredients);
+                orderCooked.Order.TimeToCookMs += _time;
             }
 
-            _orderPublisher.Publish(Topics.FoodCooked, order);
+            _orderPublisher.Publish(Topics.FoodCooked, orderCooked);
         }
     }
 }

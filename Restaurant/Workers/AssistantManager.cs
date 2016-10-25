@@ -3,11 +3,12 @@ using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class AssistantManager<T> : IHandler<T> where T : Order
+    public class AssistantManager : IHandler<OrderPlaced>
     {
         private readonly IPublisher _orderPublisher;
         private readonly Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
@@ -23,14 +24,14 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void Handle(T order)
+        public void Handle(OrderPlaced orderCooked)
         {
             Thread.Sleep(100);
 
-            order.Tax = order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
-            order.Total = order.Items.Sum(item => item.Price * item.Quantity);
+            orderCooked.Order.Tax = orderCooked.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
+            orderCooked.Order.Total = orderCooked.Order.Items.Sum(item => item.Price * item.Quantity);
 
-            _orderPublisher.Publish(Topics.BillProduced, order);
+            _orderPublisher.Publish(Topics.BillProduced, orderCooked.Order);
         }
     }
 }
