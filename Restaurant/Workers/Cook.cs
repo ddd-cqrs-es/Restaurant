@@ -65,7 +65,7 @@ namespace Restaurant.Workers
                 orderCooked.Order.TimeToCookMs += _time;
             }
 
-            _orderPublisher.Publish(Topics.FoodCooked, orderCooked);
+            _orderPublisher.Publish(orderCooked);
         }
     }
 }
