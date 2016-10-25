@@ -2,7 +2,7 @@
 
 namespace Restaurant.Events
 {
-    public class OrderCooked
+    public class OrderCooked : Event
     {
         public Order Order { get; set; }
 
