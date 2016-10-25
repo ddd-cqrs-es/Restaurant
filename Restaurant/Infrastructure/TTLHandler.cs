@@ -4,24 +4,25 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class TTLHandler : IOrderHandler
+    public class TTLHandler<T> : IHandle<T> where T: ITTLHandler
     {
-        private readonly IOrderHandler _orderHandler;
+        private readonly IHandle<T> _handler;
 
-        public TTLHandler(IOrderHandler orderHandler)
+        public TTLHandler(IHandle<T> handler)
         {
-            _orderHandler = orderHandler;
+            _handler = handler;
         }
 
-        public void HandleOrder(Order order)
+        public void Handle(T message)
         {
-            if (order.ShoulBeProcessesdBefore > DateTime.Now.Add(-TimeSpan.FromMinutes(0.5)))
+            if (message.ShoulBeProcessesdBefore > DateTime.Now.Add(-TimeSpan.FromMinutes(0.5)))
             {
-                _orderHandler.HandleOrder(order);
+                _handler.Handle(message);
             }
             else
             {
-                Console.WriteLine($"skipping {order.TableNumber}");
+                //todo
+             //   Console.WriteLine($"skipping {message.Id}");
             }
         }
     }

@@ -5,7 +5,7 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class MFDispatcher : IOrderHandler
+    public class MFDispatcher<T> : IHandle<T>
     {
         private readonly IEnumerable<QueuedHandler> _queuedHandlers;
 
@@ -14,7 +14,7 @@ namespace Restaurant.Infrastructure
             _queuedHandlers = queuedHandlers;
         }
 
-        public void HandleOrder(Order order)
+        public void Handle(T message)
         {
             while (true)
             {
@@ -25,7 +25,7 @@ namespace Restaurant.Infrastructure
                     if (queuedHandler.QueueLength < 5)
                     {
                         managedToDispatch = true;
-                        queuedHandler.HandleOrder(order);
+                        queuedHandler.Handle(T);
                     }
                 }
 

@@ -7,27 +7,27 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class QueuedHandler : IOrderHandler, IStartable
+    public class QueuedHandler<T> : IHandle<T>, IStartable
     {
-        private readonly ConcurrentQueue<Order> _queue;
+        private readonly ConcurrentQueue<T> _queue;
 
-        private readonly IOrderHandler _orderHandler;
+        private readonly IHandle<T> _handler;
 
         public string Name { get; }
 
         public int QueueLength => _queue.Count;
 
-        public QueuedHandler(string name, IOrderHandler orderHandler)
+        public QueuedHandler(string name, IHandle<T> handler)
         {
-            _queue = new ConcurrentQueue<Order>();
-            _orderHandler = orderHandler;
+            _queue = new ConcurrentQueue<T>();
+            _handler = handler;
 
             Name = name;
         }
 
-        public void HandleOrder(Order order)
+        public void Handle(T message)
         {
-            _queue.Enqueue(order);
+            _queue.Enqueue(message);
         }
 
         public async void Start()
@@ -37,15 +37,15 @@ namespace Restaurant.Infrastructure
                 {
                     while (true)
                     {
-                        Order order;
-                        var dequeueSuccuded = _queue.TryDequeue(out order);
+                        T message;
+                        var dequeueSuccuded = _queue.TryDequeue(out message);
                         if (!dequeueSuccuded)
                         {
                             Thread.Sleep(100);
                         }
                         else
                         {
-                            _orderHandler.HandleOrder(order);
+                            _handler.Handle(message);
                         }
                     }
                 });
