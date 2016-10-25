@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Restaurant.Events;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Abstract;
-using Restaurant.Models;
 
 namespace Restaurant
 {
@@ -17,7 +16,7 @@ namespace Restaurant
         private static void Main()
         {
             var publisher = new TopicBasedPubSub();
-            
+
             var cashier = new Cashier(publisher);
             var cashierQueue = new QueuedHandler<OrderPriced>("Cashier", cashier);
             var assistantManager = new QueuedHandler<OrderPlaced>("AssistantManager", new AssistantManager(publisher));
@@ -34,20 +33,27 @@ namespace Restaurant
                 "Waclaw",
                 new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Waclaw", publisher)));
 
-            var dispatcher = new QueuedHandler<Order>("MFDispatcher", new TTLHandler<Order>(new MFDispatcher<Order>(new List<QueuedHandler<Order>> { cook1, cook2, cook3 })));
+            var dispatcher = new QueuedHandler<OrderPlaced>("MFDispatcher", new TTLHandler<OrderPlaced>(new MFDispatcher<OrderPlaced>(new List<QueuedHandler<OrderPlaced>> { cook1, cook2, cook3 })));
 
-            var queues = new List<QueuedHandler<Order>>
-            {
-                assistantManager,
-                cashierQueue,
-                dispatcher,
-                cook1,
-                cook2,
-                cook3
-            };
+            //var queues = new List<QueuedHandler<Event>>
+            //{
+            //    assistantManager,
+            //    cashierQueue,
+            //    dispatcher,
+            //    cook1,
+            //    cook2,
+            //    cook3
+            //};
 
-            StartQueues(queues);
-            StartQueuePrinter(queues);
+            assistantManager.Start();
+            cashierQueue.Start();
+            dispatcher.Start();
+            cook1.Start();
+            cook2.Start();
+            cook3.Start();
+
+            //StartQueues(queues);
+            //StartQueuePrinter(queues);
 
             var waiter = new Waiter(publisher);
 
@@ -70,7 +76,7 @@ namespace Restaurant
                 ((IStartable)queue).Start();
             }
         }
-        
+
         private static void HandlePays(Cashier cashier)
         {
             Task.Run(
@@ -89,7 +95,7 @@ namespace Restaurant
                 });
         }
 
-        private static void StartQueuePrinter(List<QueuedHandler<Order>> queues)
+        private static void StartQueuePrinter<T>(List<QueuedHandler<T>> queues)
         {
             Task.Run(
                 () =>

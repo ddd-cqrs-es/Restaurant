@@ -13,11 +13,11 @@ namespace Restaurant.Infrastructure
             _orderHandlers = orderHandlers;
         }
 
-        public void Handle(T orderCooked)
+        public void Handle(T orderPlaced)
         {
             foreach (var orderHandler in _orderHandlers)
             {
-                orderHandler.Handle(orderCooked);
+                orderHandler.Handle(orderPlaced);
             }
         }
     }

@@ -9,7 +9,7 @@ using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class Cook : IHandler<OrderCooked>
+    public class Cook : IHandler<OrderPlaced>
     {
         private static readonly Random Seed = new Random(DateTime.Now.Millisecond);
         private readonly string _name;
@@ -48,9 +48,9 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void Handle(OrderCooked orderCooked)
+        public void Handle(OrderPlaced orderPlaced)
         {
-            foreach (var item in orderCooked.Order.Items)
+            foreach (var item in orderPlaced.Order.Items)
             {
                 var recipe = _cookBook.SingleOrDefault(c => c.DishName == item.Description);
 
@@ -61,11 +61,11 @@ namespace Restaurant.Workers
                 
                 Thread.Sleep(_time);
 
-                orderCooked.Order.AddIngredients(recipe.Ingredients);
-                orderCooked.Order.TimeToCookMs += _time;
+                orderPlaced.Order.AddIngredients(recipe.Ingredients);
+                orderPlaced.Order.TimeToCookMs += _time;
             }
 
-            _orderPublisher.Publish(orderCooked);
+            _orderPublisher.Publish(orderPlaced);
         }
     }
 }

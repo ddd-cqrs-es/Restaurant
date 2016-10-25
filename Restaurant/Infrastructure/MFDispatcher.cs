@@ -14,7 +14,7 @@ namespace Restaurant.Infrastructure
             _queuedHandlers = queuedHandlers;
         }
 
-        public void Handle(T orderCooked)
+        public void Handle(T orderPlaced)
         {
             while (true)
             {
@@ -25,7 +25,7 @@ namespace Restaurant.Infrastructure
                     if (queuedHandler.QueueLength < 5)
                     {
                         managedToDispatch = true;
-                        queuedHandler.Handle(orderCooked);
+                        queuedHandler.Handle(orderPlaced);
                     }
                 }
 

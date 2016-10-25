@@ -24,14 +24,14 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void Handle(OrderPlaced orderCooked)
+        public void Handle(OrderPlaced orderPlaced)
         {
             Thread.Sleep(100);
 
-            orderCooked.Order.Tax = orderCooked.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
-            orderCooked.Order.Total = orderCooked.Order.Items.Sum(item => item.Price * item.Quantity);
+            orderPlaced.Order.Tax = orderPlaced.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
+            orderPlaced.Order.Total = orderPlaced.Order.Items.Sum(item => item.Price * item.Quantity);
 
-            _orderPublisher.Publish(orderCooked);
+            _orderPublisher.Publish(orderPlaced);
         }
     }
 }

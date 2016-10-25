@@ -19,9 +19,9 @@ namespace Restaurant.Workers
         {
             _orderPublisher = orderPublisher;
         }
-        public void Handle(OrderPriced orderCooked) 
+        public void Handle(OrderPriced orderPlaced) 
         {
-            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), orderCooked);
+            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), orderPlaced);
         }
 
         public void Pay(string orderId)
