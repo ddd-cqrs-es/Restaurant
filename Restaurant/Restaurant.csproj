@@ -54,6 +54,7 @@
     <Compile Include="Events\OrderPriced.cs" />
     <Compile Include="Helpers\Getter.cs" />
     <Compile Include="Helpers\Printer.cs" />
+    <Compile Include="Infrastructure\Abstract\IPublisher.cs" />
     <Compile Include="Infrastructure\Abstract\IStartable.cs" />
     <Compile Include="Infrastructure\FanOut.cs" />
     <Compile Include="Infrastructure\ITTLHandler.cs" />

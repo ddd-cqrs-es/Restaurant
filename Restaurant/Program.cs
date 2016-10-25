@@ -11,11 +11,6 @@ using Restaurant.Models;
 
 namespace Restaurant
 {
-    public interface IPublisher
-    {
-        void Publish(Topics topic, Order message);
-    }
-
     internal class Program
     {
         private static void Main()

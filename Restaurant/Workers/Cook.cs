@@ -4,6 +4,7 @@ using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
 {
