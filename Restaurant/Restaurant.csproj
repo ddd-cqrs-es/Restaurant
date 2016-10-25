@@ -51,6 +51,7 @@
     <Compile Include="Helpers\OrderPrinter.cs" />
     <Compile Include="Infrastructure\Abstract\IStartable.cs" />
     <Compile Include="Infrastructure\FanOut.cs" />
+    <Compile Include="Infrastructure\MFDispatcher.cs" />
     <Compile Include="Infrastructure\QueuedHandler.cs" />
     <Compile Include="Infrastructure\RoundRobinDispatch.cs" />
     <Compile Include="Models\Order.cs" />

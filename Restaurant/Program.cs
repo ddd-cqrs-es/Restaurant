@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Abstract;
-using Restaurant.Workers.Abstract;
 
 namespace Restaurant
 {
@@ -15,47 +14,53 @@ namespace Restaurant
     {
         private static void Main()
         {
-            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-            stopWatch.Start();
-
-            Console.WriteLine("Starting order...");
-
             var cashier = new Cashier(new OrderPrinter());
             var cashierQueue = new QueuedHandler("cashier", cashier);
             var assistantManager = new QueuedHandler("AssistantManager", new AssistantManager(cashierQueue));
-            var queues = new List<QueuedHandler>
-            {
-                assistantManager
-            };
-            Random Seed = new Random(DateTime.Now.Millisecond);
+            var cooks = GetCooks(assistantManager);
+            var dispatcher = new QueuedHandler("MFDispatcher", new MFDispatcher(cooks));
+            var queues = BuildQueues(assistantManager, cooks[0], cooks[1], cooks[2], cashierQueue, dispatcher);
 
-            var cooks = new List<QueuedHandler>
-            {
-                new QueuedHandler("Bogdan", new Cook(Seed.Next(1000),"Bogdan", assistantManager)),
-                new QueuedHandler("Roman", new Cook(Seed.Next(1000), "Roman", assistantManager)),
-                new QueuedHandler("Waclaw", new Cook(Seed.Next(1000), "Waclaw", assistantManager))
-            };
-            queues.AddRange(cooks);
-            queues.Add(cashierQueue);
+            StartQueues(queues);
+            StartQueuePrinter(queues);
+            
+            var waiter = new Waiter(dispatcher);
+            
+            PlaceOrders(waiter);
 
+            HandlePays(cashier);
+
+            Console.ReadKey();
+        }
+
+        private static List<QueuedHandler> BuildQueues(params QueuedHandler[] queues)
+        {
+            return queues.ToList();
+        }
+
+        private static void StartQueues(List<QueuedHandler> queues)
+        {
             foreach (var queue in queues)
             {
                 ((IStartable)queue).Start();
             }
+        }
 
-            Task.Run(
-                () =>
-                {
-                    while (true)
-                    {
-                        Thread.Sleep(500);
-                        foreach (var queue in queues)
-                        {
-                            Console.WriteLine($"{queue.Name} - {queue.QueueLength}");
-                        }
-                    }
-                });
+        private static List<QueuedHandler> GetCooks(QueuedHandler assistantManager)
+        {
+            var seed = new Random(DateTime.Now.Millisecond);
 
+            var cooks = new List<QueuedHandler>
+            {
+                new QueuedHandler("Bogdan", new Cook(seed.Next(1000), "Bogdan", assistantManager)),
+                new QueuedHandler("Roman", new Cook(seed.Next(1000), "Roman", assistantManager)),
+                new QueuedHandler("Waclaw", new Cook(seed.Next(1000), "Waclaw", assistantManager))
+            };
+            return cooks;
+        }
+
+        private static void HandlePays(Cashier cashier)
+        {
             Task.Run(
                 () =>
                 {
@@ -70,15 +75,22 @@ namespace Restaurant
                         }
                     }
                 });
+        }
 
-            var waiter = new Waiter(new RoundRobinDispatch(cooks));
-            PlaceOrders(waiter);
-
-            //stopWatch.Stop();
-            Console.ReadKey();
-            //Console.WriteLine(
-            //    $"Processing {unpaidOrders.Count} orders took: {TimeSpan.FromMilliseconds(stopWatch.ElapsedMilliseconds)}");
-
+        private static void StartQueuePrinter(List<QueuedHandler> queues)
+        {
+            Task.Run(
+                () =>
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(500);
+                        foreach (var queue in queues)
+                        {
+                            Console.WriteLine($"{queue.Name} - {queue.QueueLength}");
+                        }
+                    }
+                });
         }
 
         private static void PlaceOrders(Waiter waiter)
@@ -105,7 +117,7 @@ namespace Restaurant
                         "wine"
                });
             }
-            
+
         }
     }
 }
