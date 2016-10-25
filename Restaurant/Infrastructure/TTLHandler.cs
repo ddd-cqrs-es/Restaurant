@@ -13,11 +13,11 @@ namespace Restaurant.Infrastructure
             _handler = handler;
         }
 
-        public void Handle(T orderPlaced)
+        public void Handle(T orderCooked)
         {
-            if (orderPlaced.ShoulBeProcessesdBefore > DateTime.Now.Add(-TimeSpan.FromMinutes(0.5)))
+            if (orderCooked.ShoulBeProcessesdBefore > DateTime.Now.Add(-TimeSpan.FromMinutes(0.5)))
             {
-                _handler.Handle(orderPlaced);
+                _handler.Handle(orderCooked);
             }
             else
             {

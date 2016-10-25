@@ -8,7 +8,7 @@ using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class AssistantManager : IHandler<OrderPlaced>
+    public class AssistantManager : IHandler<OrderCooked>
     {
         private readonly IPublisher _orderPublisher;
         private readonly Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
@@ -24,14 +24,14 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void Handle(OrderPlaced orderPlaced)
+        public void Handle(OrderCooked orderCooked)
         {
             Thread.Sleep(100);
 
-            orderPlaced.Order.Tax = orderPlaced.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
-            orderPlaced.Order.Total = orderPlaced.Order.Items.Sum(item => item.Price * item.Quantity);
+            orderCooked.Order.Tax = orderCooked.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
+            orderCooked.Order.Total = orderCooked.Order.Items.Sum(item => item.Price * item.Quantity);
 
-            _orderPublisher.Publish(orderPlaced);
+            _orderPublisher.Publish(orderCooked);
         }
     }
 }

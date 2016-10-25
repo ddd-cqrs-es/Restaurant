@@ -48,9 +48,9 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void Handle(OrderPlaced orderPlaced)
+        public void Handle(OrderPlaced orderCooked)
         {
-            foreach (var item in orderPlaced.Order.Items)
+            foreach (var item in orderCooked.Order.Items)
             {
                 var recipe = _cookBook.SingleOrDefault(c => c.DishName == item.Description);
 
@@ -61,11 +61,11 @@ namespace Restaurant.Workers
                 
                 Thread.Sleep(_time);
 
-                orderPlaced.Order.AddIngredients(recipe.Ingredients);
-                orderPlaced.Order.TimeToCookMs += _time;
+                orderCooked.Order.AddIngredients(recipe.Ingredients);
+                orderCooked.Order.TimeToCookMs += _time;
             }
 
-            _orderPublisher.Publish(orderPlaced);
+            _orderPublisher.Publish(orderCooked);
         }
     }
 }
