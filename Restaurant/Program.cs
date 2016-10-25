@@ -7,17 +7,65 @@ using System.Threading;
 using System.Threading.Tasks;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Abstract;
+using Restaurant.Models;
+using Restaurant.Workers.Abstract;
 
 namespace Restaurant
 {
+    public class TopicBasedPubSub : IPublisher // instead of IOrderHandler
+    {
+        private Dictionary<Topics, List<IOrderHandler>> _subscribers = new Dictionary<Topics, List<IOrderHandler>>();
+        private readonly object _lock = new object();
+
+        public void Publish(Topics topic, Order order)
+        {
+            foreach (var subscriber in _subscribers[topic])
+            {
+                subscriber.HandleOrder(order);
+            }
+        }
+
+        public void Subscribe(Topics topic, IOrderHandler subscriber)
+        {
+            lock (_lock)
+            {
+                var subscribers = _subscribers;
+
+                if (subscribers.ContainsKey(topic))
+                {
+                    subscribers[topic].Add(subscriber);
+                }
+                else
+                {
+                    subscribers.Add(
+                        topic,
+                        new List<IOrderHandler>
+                        {
+                            subscriber
+                        });
+                }
+
+                _subscribers = subscribers;
+            }
+        }
+    }
+
+    public interface IPublisher
+    {
+        void Publish(Topics topic, Order order);
+    }
+
     internal class Program
     {
         private static void Main()
         {
-            var cashier = new Cashier(new OrderPrinter());
+     
+            var publisher = new TopicBasedPubSub();
+
+            var cashier = new Cashier(publisher);
             var cashierQueue = new QueuedHandler("cashier", cashier);
-            var assistantManager = new QueuedHandler("AssistantManager", new AssistantManager(cashierQueue));
-            var cooks = GetCooks(assistantManager);
+            var assistantManager = new QueuedHandler("AssistantManager", new AssistantManager(publisher));
+            var cooks = GetCooks(publisher);
             var dispatcher = new QueuedHandler("MFDispatcher", new TTLHandler(new MFDispatcher(cooks)));
 
             var queues = new List<QueuedHandler>
@@ -31,8 +79,14 @@ namespace Restaurant
             StartQueues(queues);
             StartQueuePrinter(queues);
             
-            var waiter = new Waiter(dispatcher);
-            
+            var waiter = new Waiter(publisher);
+
+            publisher.Subscribe(Topics.OrderReceived, dispatcher);
+            publisher.Subscribe(Topics.FoodCooked, assistantManager);
+            publisher.Subscribe(Topics.BillProduced, cashier);
+            publisher.Subscribe(Topics.OrderPaid, new OrderPrinter());
+
+
             PlaceOrders(waiter);
 
             HandlePays(cashier);
@@ -48,15 +102,15 @@ namespace Restaurant
             }
         }
 
-        private static List<QueuedHandler> GetCooks(QueuedHandler assistantManager)
+        private static List<QueuedHandler> GetCooks(IPublisher publisher)
         {
             var seed = new Random(DateTime.Now.Millisecond);
 
             var cooks = new List<QueuedHandler>
             {
-                new QueuedHandler("Bogdan", new TTLHandler(new Cook(seed.Next(1000), "Bogdan", assistantManager))),
-                new QueuedHandler("Roman", new TTLHandler(new Cook(seed.Next(1000), "Roman", assistantManager))),
-                new QueuedHandler("Waclaw", new TTLHandler(new Cook(seed.Next(1000), "Waclaw", assistantManager)))
+                new QueuedHandler("Bogdan", new TTLHandler(new Cook(seed.Next(1000), "Bogdan", publisher))),
+                new QueuedHandler("Roman", new TTLHandler(new Cook(seed.Next(1000), "Roman", publisher))),
+                new QueuedHandler("Waclaw", new TTLHandler(new Cook(seed.Next(1000), "Waclaw", publisher)))
             };
 
             return cooks;

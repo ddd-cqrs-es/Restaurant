@@ -64,6 +64,7 @@
     <Compile Include="Workers\AssistantManager.cs" />
     <Compile Include="Workers\Cashier.cs" />
     <Compile Include="Workers\Cook.cs" />
+    <Compile Include="Workers\Topics.cs" />
     <Compile Include="Workers\Waiter.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ namespace Restaurant.Workers
 {
     public class AssistantManager : IOrderHandler
     {
-        private readonly IOrderHandler _orderHandler;
+        private readonly IPublisher _orderPublisher;
         private readonly Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
         {
             {"pizza", 2m },
@@ -17,9 +17,9 @@ namespace Restaurant.Workers
             {"wine", 1.5m }
         };
 
-        public AssistantManager(IOrderHandler orderHandler)
+        public AssistantManager(IPublisher orderPublisher)
         {
-            _orderHandler = orderHandler;
+            _orderPublisher = orderPublisher;
         }
 
         public void HandleOrder(Order order)
@@ -29,7 +29,7 @@ namespace Restaurant.Workers
             order.Tax = order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
             order.Total = order.Items.Sum(item => item.Price * item.Quantity);
 
-            _orderHandler.HandleOrder(order);
+            _orderPublisher.Publish(Topics.BillProduced, order);
         }
     }
 }

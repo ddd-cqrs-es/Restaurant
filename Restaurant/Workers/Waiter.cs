@@ -10,7 +10,7 @@ namespace Restaurant.Workers
 {
     public class Waiter
     {
-        private readonly IOrderHandler _orderHandler;
+        private readonly IPublisher _orderPublisher;
         private readonly Dictionary<string, decimal> _menu = new Dictionary<string, decimal>
         {
             {"pizza", 9m },
@@ -19,9 +19,9 @@ namespace Restaurant.Workers
             {"wine", 7m }
         };
 
-        public Waiter(IOrderHandler orderHandler)
+        public Waiter(IPublisher orderPublisher)
         {
-            _orderHandler = orderHandler;
+            _orderPublisher = orderPublisher;
         }
 
         public async void PlaceOrder(int tableNumber, List<string> items)
@@ -46,7 +46,7 @@ namespace Restaurant.Workers
                             TableNumber = tableNumber,
                             Items = i
                         };
-                        _orderHandler.HandleOrder(order);
+                        _orderPublisher.Publish(Topics.OrderReceived, order);
                     }
                     catch (Exception e)
                     {

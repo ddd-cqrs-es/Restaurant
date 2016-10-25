@@ -11,7 +11,7 @@ namespace Restaurant.Workers
     {
         private static readonly Random Seed = new Random(DateTime.Now.Millisecond);
         private readonly string _name;
-        private readonly IOrderHandler _orderHandler;
+        private readonly IPublisher _orderPublisher;
         private readonly Recipe[] _cookBook = {
             new Recipe
             {
@@ -39,11 +39,11 @@ namespace Restaurant.Workers
 
         private int _time;
 
-        public Cook(int time, string name, IOrderHandler orderHandler)
+        public Cook(int time, string name, IPublisher orderPublisher)
         {
             _time = time;
             _name = name;
-            _orderHandler = orderHandler;
+            _orderPublisher = orderPublisher;
         }
 
         public void HandleOrder(Order order)
@@ -63,7 +63,7 @@ namespace Restaurant.Workers
                 order.TimeToCookMs += _time;
             }
 
-            _orderHandler.HandleOrder(order);
+            _orderPublisher.Publish(Topics.FoodCooked, order);
         }
     }
 }

@@ -11,11 +11,11 @@ namespace Restaurant.Workers
     public class Cashier : IOrderHandler
     {
         private readonly ConcurrentDictionary<string, Order> _outstandingOrders = new ConcurrentDictionary<string, Order>();
-        private readonly IOrderHandler _orderHandler;
+        private readonly IPublisher _orderPublisher;
 
-        public Cashier(IOrderHandler orderHandler)
+        public Cashier(IPublisher orderPublisher)
         {
-            _orderHandler = orderHandler;
+            _orderPublisher = orderPublisher;
         }
         public void HandleOrder(Order order)
         {
@@ -31,7 +31,7 @@ namespace Restaurant.Workers
 
             Order removedOrder;
             _outstandingOrders.TryRemove(orderId, out removedOrder);
-            _orderHandler.HandleOrder(order);
+            _orderPublisher.Publish(Topics.OrderPaid, order);
         }
 
         public IEnumerable<string> GetOutstandingOrders()
