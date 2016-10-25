@@ -4,7 +4,7 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class TTLHandler<T> : IHandle<T> where T: ITTLMessage
+    public class TTLHandler<T> : IHandler<T> where T: ITTLMessage
     {
         private readonly IHandler<T> _handler;
 
