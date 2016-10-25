@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Restaurant.Workers
 {
-    public class AssistantManager : IHandler<>
+    public class AssistantManager<T> : IHandler<T> where T : Order
     {
         private readonly IPublisher _orderPublisher;
         private readonly Dictionary<string, decimal> _calculationRules = new Dictionary<string, decimal>
@@ -22,7 +22,7 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void HandleOrder(Order order) 
+        public void Handle(T order)
         {
             Thread.Sleep(100);
 
