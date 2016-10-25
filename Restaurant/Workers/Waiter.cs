@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;
 
 namespace Restaurant.Workers
@@ -47,7 +48,7 @@ namespace Restaurant.Workers
                             TableNumber = tableNumber,
                             Items = i
                         };
-                        _orderPublisher.Publish(Topics.OrderReceived, order);
+                        _orderPublisher.Publish(new OrderPlaced(order));
                     }
                     catch (Exception e)
                     {

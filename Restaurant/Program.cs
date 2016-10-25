@@ -19,8 +19,8 @@ namespace Restaurant
             var publisher = new TopicBasedPubSub();
             
             var cashier = new Cashier(publisher);
-            var cashierQueue = new QueuedHandler<Order>("Cashier", cashier);
-            var assistantManager = new QueuedHandler<Order>("AssistantManager", new AssistantManager(publisher));
+            var cashierQueue = new QueuedHandler<OrderPriced>("Cashier", cashier);
+            var assistantManager = new QueuedHandler<OrderPlaced>("AssistantManager", new AssistantManager(publisher));
 
             var seed = new Random(DateTime.Now.Millisecond);
 

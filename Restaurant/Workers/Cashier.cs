@@ -12,7 +12,7 @@ namespace Restaurant.Workers
 {
     public class Cashier : IHandler<OrderPriced>
     {
-        private readonly ConcurrentDictionary<string, Order> _outstandingOrders = new ConcurrentDictionary<string, Order>();
+        private readonly ConcurrentDictionary<string, OrderPriced> _outstandingOrders = new ConcurrentDictionary<string, OrderPriced>();
         private readonly IPublisher _orderPublisher;
 
         public Cashier(IPublisher orderPublisher)
@@ -21,19 +21,19 @@ namespace Restaurant.Workers
         }
         public void Handle(OrderPriced orderCooked) 
         {
-            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), orderCooked.Order);
+            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), orderCooked);
         }
 
         public void Pay(string orderId)
         {
             Thread.Sleep(100);
 
-            var order = _outstandingOrders[orderId];
-            order.Paid = true;
+            var orderPriced = _outstandingOrders[orderId];
+            orderPriced.Order.Paid = true;
 
-            Order removedOrder;
+            OrderPriced removedOrder;
             _outstandingOrders.TryRemove(orderId, out removedOrder);
-            _orderPublisher.Publish(Topics.OrderPaid, order);
+            _orderPublisher.Publish(orderPriced);
         }
 
         public IEnumerable<string> GetOutstandingOrders()

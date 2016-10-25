@@ -31,7 +31,7 @@ namespace Restaurant.Workers
             orderCooked.Order.Tax = orderCooked.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
             orderCooked.Order.Total = orderCooked.Order.Items.Sum(item => item.Price * item.Quantity);
 
-            _orderPublisher.Publish(Topics.BillProduced, orderCooked.Order);
+            _orderPublisher.Publish(orderCooked);
         }
     }
 }
