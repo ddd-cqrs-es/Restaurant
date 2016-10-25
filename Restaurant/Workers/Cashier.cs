@@ -1,6 +1,7 @@
 ﻿using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace Restaurant.Workers
 {
     public class Cashier : IOrderHandler
     {
-        private readonly Dictionary<string, Order> _outstandingOrders = new Dictionary<string, Order>();
+        private readonly ConcurrentDictionary<string, Order> _outstandingOrders = new ConcurrentDictionary<string, Order>();
         private readonly IOrderHandler _orderHandler;
 
         public Cashier(IOrderHandler orderHandler)
@@ -18,7 +19,7 @@ namespace Restaurant.Workers
         }
         public void HandleOrder(Order order)
         {
-            _outstandingOrders.Add(Guid.NewGuid().ToString(), order);
+            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), order);
         }
 
         public void Pay(string orderId)
@@ -28,13 +29,23 @@ namespace Restaurant.Workers
             var order = _outstandingOrders[orderId];
             order.Paid = true;
 
-            _outstandingOrders.Remove(orderId);
+            Order removedOrder;
+            _outstandingOrders.TryRemove(orderId, out removedOrder);
             _orderHandler.HandleOrder(order);
         }
 
         public IEnumerable<string> GetOutstandingOrders()
         {
-            return _outstandingOrders.Keys.Select(x => x).ToList();
+            try
+            {
+                return _outstandingOrders.Keys.Select(x => x).ToList();
+            }
+            catch (Exception e)
+            {
+                
+                Console.WriteLine(e);
+                return new List<string>();
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Restaurant.Models;
 using Restaurant.Workers.Abstract;
@@ -7,16 +8,16 @@ namespace Restaurant.Infrastructure
 {
     public class RoundRobinDispatch : IOrderHandler
     {
-        private IEnumerable<IOrderHandler> _orderHandlers;
+        private readonly Queue<IOrderHandler> _queue;
 
         public RoundRobinDispatch(IEnumerable<IOrderHandler> orderHandlers)
         {
-            _orderHandlers = orderHandlers;
+            _queue = new Queue<IOrderHandler>(orderHandlers);
         }
 
         public void HandleOrder(Order order)
         {
-            var orderHandler = _orderHandlers.First();
+            var orderHandler = _queue.Dequeue();
 
             try
             {
@@ -24,7 +25,7 @@ namespace Restaurant.Infrastructure
             }
             finally
             {
-                _orderHandlers = _orderHandlers.Skip(1);
+                _queue.Enqueue(orderHandler);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Restaurant.Models;
+﻿using System;
+using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,13 @@ namespace Restaurant.Workers
 {
     public class Cook : IOrderHandler
     {
+        private static readonly Random Seed = new Random(DateTime.Now.Millisecond);
         private readonly string _name;
         private readonly IOrderHandler _orderHandler;
         private readonly Recipe[] _cookBook = {
             new Recipe
             {
-                TimeToPrepare = 50,
+                TimeToPrepare = 200,
                 DishName = "pizza",
                 Ingredients = new List<string> { "cheese", "tomato", "mushrooms" }
             },
@@ -35,8 +37,11 @@ namespace Restaurant.Workers
             }
         };
 
-        public Cook(string name, IOrderHandler orderHandler)
+        private int _time;
+
+        public Cook(int time, string name, IOrderHandler orderHandler)
         {
+            _time = time;
             _name = name;
             _orderHandler = orderHandler;
         }
@@ -45,12 +50,17 @@ namespace Restaurant.Workers
         {
             foreach (var item in order.Items)
             {
-                var recipe = _cookBook.Single(c => c.DishName == item.Description);
+                var recipe = _cookBook.SingleOrDefault(c => c.DishName == item.Description);
 
-                Thread.Sleep(recipe.TimeToPrepare);
+                if (recipe == null)
+                {
+                    
+                }
+                
+                Thread.Sleep(_time);
 
                 order.AddIngredients(recipe.Ingredients);
-                order.TimeToCookMs += recipe.TimeToPrepare;
+                order.TimeToCookMs += _time;
             }
 
             _orderHandler.HandleOrder(order);

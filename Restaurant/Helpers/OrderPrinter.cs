@@ -8,7 +8,7 @@ namespace Restaurant.Helpers
     {
         public void HandleOrder(Order order)
         {
-            Console.WriteLine(order.ToJsonString());
+            //Console.WriteLine(order.ToJsonString());
         }
     }
 }

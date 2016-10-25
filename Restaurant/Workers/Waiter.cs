@@ -1,4 +1,5 @@
-﻿using Restaurant.Models;
+﻿using System;
+using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,9 @@ namespace Restaurant.Workers
             await Task.Run(
                 () =>
                 {
-                    var order = new Order
+                    try
                     {
-                        TableNumber = tableNumber,
-                        Items = items
+                        var i = items
                             .GroupBy(item => item)
                             .Select(
                                 itemGroup => new OrderItem()
@@ -40,10 +40,20 @@ namespace Restaurant.Workers
                                     Price = _menu[itemGroup.Key],
                                     Quantity = items.Count(item => item == itemGroup.Key)
                                 })
-                            .ToList()
-                    };
+                            .ToList();
+                        var order = new Order
+                        {
+                            TableNumber = tableNumber,
+                            Items = i
+                        };
+                        _orderHandler.HandleOrder(order);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
 
-                    _orderHandler.HandleOrder(order);
+                    
                 });
         }
     }

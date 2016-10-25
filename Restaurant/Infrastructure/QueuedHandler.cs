@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using Restaurant.Infrastructure.Abstract;
 using Restaurant.Models;
 using Restaurant.Workers.Abstract;
@@ -12,10 +13,19 @@ namespace Restaurant.Infrastructure
 
         private readonly IOrderHandler _orderHandler;
 
-        public QueuedHandler(IOrderHandler orderHandler)
+        public string Name { get; set; }
+
+        public int QueueLength
+        {
+            get { return _queue.Count; }
+        }
+
+        public QueuedHandler(string name, IOrderHandler orderHandler)
         {
             _queue = new ConcurrentQueue<Order>();
             _orderHandler = orderHandler;
+
+            Name = name;
         }
 
         public void HandleOrder(Order order)
@@ -23,21 +33,25 @@ namespace Restaurant.Infrastructure
             _queue.Enqueue(order);
         }
 
-        public void Start()
+        public async void Start()
         {
-            while (true)
-            {
-                Order order;
-                var dequeueSuccuded = _queue.TryDequeue(out order);
-                if (!dequeueSuccuded)
+            await Task.Run(
+                () =>
                 {
-                    Thread.Sleep(100);
-                }
-                else
-                {
-                    _orderHandler.HandleOrder(order);
-                }
-            }
+                    while (true)
+                    {
+                        Order order;
+                        var dequeueSuccuded = _queue.TryDequeue(out order);
+                        if (!dequeueSuccuded)
+                        {
+                            Thread.Sleep(100);
+                        }
+                        else
+                        {
+                            _orderHandler.HandleOrder(order);
+                        }
+                    }
+                });
         }
     }
 }
