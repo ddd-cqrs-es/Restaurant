@@ -5,6 +5,6 @@ namespace Restaurant.Infrastructure.Abstract
 {
     public interface IPublisher
     {
-        void Publish(Topics topic, Order message);
+        void Publish<T>(T message);
     }
 }
