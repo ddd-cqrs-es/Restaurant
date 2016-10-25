@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Restaurant.Helpers;
@@ -60,14 +61,15 @@ namespace Restaurant.Models
             set { _jsonOrder.ingredients = JToken.FromObject(value, _serializer); }
         }
         
-        public Order()
+        public Order() :this("{}")
         {
-            _jsonOrder = JObject.Parse("{}");
         }
 
         public Order(string json)
         {
             _jsonOrder = JObject.Parse(json);
+
+            ShoulBeProcessesdBefore = DateTime.Now;
         }
 
         public void AddItem(OrderItem orderItem)
@@ -102,5 +104,7 @@ namespace Restaurant.Models
         {
             return JObject.FromObject(this, _serializer).ToString();
         }
+
+        public DateTime ShoulBeProcessesdBefore { get; set; }
     }
 }

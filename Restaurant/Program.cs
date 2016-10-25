@@ -18,9 +18,16 @@ namespace Restaurant
             var cashierQueue = new QueuedHandler("cashier", cashier);
             var assistantManager = new QueuedHandler("AssistantManager", new AssistantManager(cashierQueue));
             var cooks = GetCooks(assistantManager);
-            var dispatcher = new QueuedHandler("MFDispatcher", new MFDispatcher(cooks));
-            var queues = BuildQueues(assistantManager, cooks[0], cooks[1], cooks[2], cashierQueue, dispatcher);
+            var dispatcher = new QueuedHandler("MFDispatcher", new TTLHandler(new MFDispatcher(cooks)));
 
+            var queues = new List<QueuedHandler>
+            {
+                assistantManager,
+                cashierQueue,
+                dispatcher
+            };
+            queues.AddRange(cooks);
+            
             StartQueues(queues);
             StartQueuePrinter(queues);
             
@@ -31,11 +38,6 @@ namespace Restaurant
             HandlePays(cashier);
 
             Console.ReadKey();
-        }
-
-        private static List<QueuedHandler> BuildQueues(params QueuedHandler[] queues)
-        {
-            return queues.ToList();
         }
 
         private static void StartQueues(List<QueuedHandler> queues)
@@ -52,10 +54,11 @@ namespace Restaurant
 
             var cooks = new List<QueuedHandler>
             {
-                new QueuedHandler("Bogdan", new Cook(seed.Next(1000), "Bogdan", assistantManager)),
-                new QueuedHandler("Roman", new Cook(seed.Next(1000), "Roman", assistantManager)),
-                new QueuedHandler("Waclaw", new Cook(seed.Next(1000), "Waclaw", assistantManager))
+                new QueuedHandler("Bogdan", new TTLHandler(new Cook(seed.Next(1000), "Bogdan", assistantManager))),
+                new QueuedHandler("Roman", new TTLHandler(new Cook(seed.Next(1000), "Roman", assistantManager))),
+                new QueuedHandler("Waclaw", new TTLHandler(new Cook(seed.Next(1000), "Waclaw", assistantManager)))
             };
+
             return cooks;
         }
 

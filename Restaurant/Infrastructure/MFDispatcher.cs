@@ -16,20 +16,26 @@ namespace Restaurant.Infrastructure
 
         public void HandleOrder(Order order)
         {
-            var managedToDispatch = false;
-            foreach (var queuedHandler in _queuedHandlers)
+            while (true)
             {
-                if (queuedHandler.QueueLength < 5)
-                {
-                    managedToDispatch = true;
-                    queuedHandler.HandleOrder(order);
-                }
-            }
+                var managedToDispatch = false;
 
-            if (!managedToDispatch)
-            {
-                Thread.Sleep(200);
-                HandleOrder(order);
+                foreach (var queuedHandler in _queuedHandlers)
+                {
+                    if (queuedHandler.QueueLength < 5)
+                    {
+                        managedToDispatch = true;
+                        queuedHandler.HandleOrder(order);
+                    }
+                }
+
+                if (!managedToDispatch)
+                {
+                    Thread.Sleep(200);
+                    continue;
+                }
+
+                break;
             }
         }
     }

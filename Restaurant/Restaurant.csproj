@@ -54,6 +54,7 @@
     <Compile Include="Infrastructure\MFDispatcher.cs" />
     <Compile Include="Infrastructure\QueuedHandler.cs" />
     <Compile Include="Infrastructure\RoundRobinDispatch.cs" />
+    <Compile Include="Infrastructure\TTLHandler.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\Recipe.cs" />

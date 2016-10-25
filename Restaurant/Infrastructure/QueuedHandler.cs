@@ -13,12 +13,9 @@ namespace Restaurant.Infrastructure
 
         private readonly IOrderHandler _orderHandler;
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public int QueueLength
-        {
-            get { return _queue.Count; }
-        }
+        public int QueueLength => _queue.Count;
 
         public QueuedHandler(string name, IOrderHandler orderHandler)
         {
