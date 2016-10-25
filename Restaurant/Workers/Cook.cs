@@ -8,6 +8,7 @@ namespace Restaurant.Workers
 {
     public class Cook : IOrderHandler
     {
+        private readonly string _name;
         private readonly IOrderHandler _orderHandler;
         private readonly Recipe[] _cookBook = {
             new Recipe
@@ -34,8 +35,9 @@ namespace Restaurant.Workers
             }
         };
 
-        public Cook(IOrderHandler orderHandler)
+        public Cook(string name, IOrderHandler orderHandler)
         {
+            _name = name;
             _orderHandler = orderHandler;
         }
 
