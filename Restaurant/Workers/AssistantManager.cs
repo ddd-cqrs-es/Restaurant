@@ -22,7 +22,7 @@ namespace Restaurant.Workers
             _orderPublisher = orderPublisher;
         }
 
-        public void HandleOrder(Order order)
+        public void HandleOrder(Order order) 
         {
             Thread.Sleep(100);
 

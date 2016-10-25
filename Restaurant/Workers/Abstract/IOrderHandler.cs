@@ -4,6 +4,6 @@ namespace Restaurant.Workers.Abstract
 {
     public interface IOrderHandler
     {
-        void HandleOrder(Order order);
+        void HandleOrder(Order message);
     }
 }

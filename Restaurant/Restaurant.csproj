@@ -47,6 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\OrderCooked.cs" />
+    <Compile Include="Events\OrderPaid.cs" />
+    <Compile Include="Events\OrderPlaced.cs" />
+    <Compile Include="Events\OrderPriced.cs" />
     <Compile Include="Helpers\Getter.cs" />
     <Compile Include="Helpers\OrderPrinter.cs" />
     <Compile Include="Infrastructure\Abstract\IStartable.cs" />
