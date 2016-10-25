@@ -26,24 +26,23 @@ namespace Restaurant.Infrastructure
         {
             lock (_lock)
             {
-                var subscribers = 
-                    new Dictionary<string, List<dynamic>>(_subscribers);
 
-                if (subscribers.ContainsKey(typeof(T).ToString()))
+                var key = typeof(T).ToString();
+                
+                if (_subscribers.ContainsKey(key))
                 {
-                    subscribers[typeof(T).ToString()].Add(subscriber);
+                    var newSubsList = new List<dynamic>(_subscribers[key]);
+                    _subscribers[key].Add(subscriber);
                 }
                 else
                 {
-                    subscribers.Add(
+                    _subscribers.Add(
                         typeof(T).ToString(),
                         new List<dynamic>
                         {
                             subscriber
                         });
                 }
-
-                _subscribers = subscribers;
             }
         }
     }
