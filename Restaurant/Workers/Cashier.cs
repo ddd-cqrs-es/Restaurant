@@ -1,5 +1,4 @@
-﻿using Restaurant.Models;
-using Restaurant.Workers.Abstract;
+﻿using Restaurant.Workers.Abstract;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

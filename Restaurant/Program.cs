@@ -34,31 +34,9 @@ namespace Restaurant
                 new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Waclaw", publisher)));
 
             var dispatcher = new QueuedHandler<OrderPlaced>("MFDispatcher", new TTLHandler<OrderPlaced>(new MFDispatcher<OrderPlaced>(new List<QueuedHandler<OrderPlaced>> { cook1, cook2, cook3 })));
-
-            Task.Run(
-                () =>
-                {
-                    while (true)
-                    {
-                        Thread.Sleep(500);
-                        Console.WriteLine($"{assistantManager.Name} - {assistantManager.QueueLength}");
-                        Console.WriteLine($"{cashierQueue.Name} - {cashierQueue.QueueLength}");
-                        Console.WriteLine($"{dispatcher.Name} - {dispatcher.QueueLength}");
-                        Console.WriteLine($"{cook1.Name} - {cook1.QueueLength}");
-                        Console.WriteLine($"{cook2.Name} - {cook2.QueueLength}");
-                        Console.WriteLine($"{cook3.Name} - {cook3.QueueLength}");
-                    }
-                });
-
-            assistantManager.Start();
-            cashierQueue.Start();
-            dispatcher.Start();
-            cook1.Start();
-            cook2.Start();
-            cook3.Start();
-
-            //StartQueues(queues);
-            //StartQueuePrinter(queues);
+            
+            StartQueues(new List<IStartable> { assistantManager, cashierQueue, dispatcher, cook1, cook2, cook3 });
+            StartQueuePrinter(new List<IPrintable> { assistantManager, cashierQueue, dispatcher, cook1, cook2, cook3 });
 
             var waiter = new Waiter(publisher);
 
@@ -74,11 +52,11 @@ namespace Restaurant
             Console.ReadKey();
         }
 
-        private static void StartQueues<T>(List<QueuedHandler<T>> queues)
+        private static void StartQueues(List<IStartable> queues)
         {
             foreach (var queue in queues)
             {
-                ((IStartable)queue).Start();
+                queue.Start();
             }
         }
 
@@ -100,7 +78,7 @@ namespace Restaurant
                 });
         }
 
-        private static void StartQueuePrinter<T>(List<QueuedHandler<T>> queues)
+        private static void StartQueuePrinter(List<IPrintable> queues)
         {
             Task.Run(
                 () =>
@@ -110,7 +88,7 @@ namespace Restaurant
                         Thread.Sleep(500);
                         foreach (var queue in queues)
                         {
-                            Console.WriteLine($"{queue.Name} - {queue.QueueLength}");
+                            queue.Print();
                         }
                     }
                 });

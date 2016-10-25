@@ -1,13 +1,13 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Restaurant.Infrastructure.Abstract;
-using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
 {
-    public class QueuedHandler<T> : IHandler<T>, IStartable
+    public class QueuedHandler<T> : IHandler<T>, IStartable, IPrintable
     {
         private readonly ConcurrentQueue<T> _queue;
 
@@ -50,5 +50,15 @@ namespace Restaurant.Infrastructure
                     }
                 });
         }
+
+        public void Print()
+        {
+            Console.WriteLine($"{Name} - {QueueLength}");
+        }
+    }
+
+    public interface IPrintable
+    {
+        void Print();
     }
 }

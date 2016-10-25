@@ -1,6 +1,4 @@
-﻿using Restaurant.Models;
-
-namespace Restaurant.Workers.Abstract
+﻿namespace Restaurant.Workers.Abstract
 {
     public interface IHandler<in T>
     {

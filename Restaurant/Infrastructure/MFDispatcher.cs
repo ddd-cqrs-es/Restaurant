@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading;
-using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure

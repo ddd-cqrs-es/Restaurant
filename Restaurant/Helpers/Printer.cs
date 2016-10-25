@@ -1,5 +1,4 @@
 ﻿using Restaurant.Workers.Abstract;
-using System;
 using Restaurant.Events;
 
 namespace Restaurant.Helpers
@@ -8,7 +7,7 @@ namespace Restaurant.Helpers
     {
         public void Handle(OrderPaid orderPaid)
         {
-            Console.WriteLine(orderPaid.Order.ToJsonString());
+            //Console.WriteLine(orderPaid.Order.ToJsonString());
         }
     }
 }

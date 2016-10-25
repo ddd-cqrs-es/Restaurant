@@ -1,9 +1,7 @@
 ﻿using System;
 using Restaurant.Models;
-using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;

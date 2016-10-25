@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Infrastructure
