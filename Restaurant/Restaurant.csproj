@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messages\CookFood.cs" />
+    <Compile Include="Messages\DuplicateOrder.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\OrderCompleted.cs" />
     <Compile Include="Messages\OrderCooked.cs" />

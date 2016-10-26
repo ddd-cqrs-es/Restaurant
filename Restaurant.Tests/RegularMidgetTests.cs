@@ -54,5 +54,29 @@ namespace Restaurant.Tests
 
             midget.Handle(new OrderPaid(new Order(), "corrId"));
         }
+
+        [Fact]
+        public void ShouldNotPassDoubleMessage()
+        {
+            var publisherMock = new Mock<IPublisher>();
+            var midget = new RegularMidget(publisherMock.Object);
+
+            midget.Handle(new OrderPriced(new Order(), string.Empty));
+            midget.Handle(new OrderPriced(new Order(), string.Empty));
+
+            publisherMock.Verify(p => p.Publish(It.IsAny<TakePayment>()), Times.Once);
+        }
+
+        [Fact]
+        public void ShouldPublish_DuplicateOrder_When_OrderPriced_ReceivedTwice()
+        {
+            var publisherMock = new Mock<IPublisher>();
+            var midget = new RegularMidget(publisherMock.Object);
+
+            midget.Handle(new OrderPriced(new Order(), string.Empty));
+            midget.Handle(new OrderPriced(new Order(), string.Empty));
+
+            publisherMock.Verify(p => p.Publish(It.IsAny<DuplicateOrder>()));
+        }
     }
 }

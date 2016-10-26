@@ -13,6 +13,8 @@ namespace Restaurant.Messages
             MessageId = Guid.NewGuid().ToString();
         }
 
+     
+
         public DateTime ShoulBeProcessesdBefore { get; }
 
         public string CorrelationId { get; }

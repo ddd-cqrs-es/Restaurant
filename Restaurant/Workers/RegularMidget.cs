@@ -1,11 +1,14 @@
 ﻿using System;
 using Restaurant.Infrastructure.Abstract;
 using Restaurant.Messages;
+using Restaurant.Models;
 
 namespace Restaurant.Workers
 {
     public class RegularMidget : IMidget
     {
+        private Message _lastMessage;
+
         public Action<string> CleanUp { get; set; }
         private readonly IPublisher _publisher;
 
@@ -16,6 +19,15 @@ namespace Restaurant.Workers
 
         public void Handle(Message message)
         {
+            if (_lastMessage != null && message.GetType() == _lastMessage.GetType())
+            {
+                _publisher.Publish(new DuplicateOrder(DateTime.MaxValue, message.CorrelationId, message.MessageId));
+
+                return;
+            }
+
+            _lastMessage = message;
+
             if (message is OrderPlaced)
             {
                 _publisher.Publish(new CookFood(((OrderPlaced)message).Order, message.MessageId));
