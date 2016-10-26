@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Restaurant.Tests
 {
-    public class MidgetTests
+    public class RegularMidgetTests
     {
         [Fact]
         public void ShouldPublish_CookFood_When_OrderPlaced_Received()

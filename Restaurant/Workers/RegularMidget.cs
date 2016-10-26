@@ -1,7 +1,6 @@
 ﻿using System;
 using Restaurant.Infrastructure.Abstract;
 using Restaurant.Messages;
-using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Workers
 {

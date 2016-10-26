@@ -28,13 +28,13 @@ namespace Restaurant
 
             var cook1 = new QueuedHandler<CookFood>(
                 "BogdanQueue",
-                new TTLHandler<CookFood>(new Cook(seed.Next(1000), publisher)));
+                new TTLHandler<CookFood>(new FuzzyHandler<CookFood>(new Cook(seed.Next(1000), publisher), 10, 10)));
             var cook2 = new QueuedHandler<CookFood>(
                 "RomanQueue",
-                new TTLHandler<CookFood>(new Cook(seed.Next(1000), publisher)));
+                new TTLHandler<CookFood>(new FuzzyHandler<CookFood>(new Cook(seed.Next(1000), publisher), 95, 50)));
             var cook3 = new QueuedHandler<CookFood>(
                 "WaclawQueue",
-                new TTLHandler<CookFood>(new Cook(seed.Next(1000), publisher)));
+                new TTLHandler<CookFood>(new FuzzyHandler<CookFood>(new Cook(seed.Next(1000), publisher), 10, 20)));
 
             var dispatcher = new QueuedHandler<CookFood>(
                 "MFDispatcher",
