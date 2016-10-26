@@ -17,6 +17,10 @@ namespace Restaurant
         {
             var publisher = new TopicBasedPubSub();
 
+            var midgetHouse = new MidgetHouse(publisher);
+            var midgetHouseHandler = new QueuedHandler<Message>("MidgetHouse", midgetHouse);
+            midgetHouse.QueuedHandler = midgetHouseHandler;
+
             var cashier = new Cashier(publisher);
             var cashierQueue = new QueuedHandler<TakePayment>("Cashier", cashier);
             var assistantManager = new QueuedHandler<PriceOrdered>("AssistantManager", new AssistantManager(publisher));
@@ -52,7 +56,8 @@ namespace Restaurant
                     dispatcher,
                     cook1,
                     cook2,
-                    cook3
+                    cook3,
+                    midgetHouseHandler
                 });
             StartQueuePrinter(
                 new List<IPrintable>
@@ -62,7 +67,8 @@ namespace Restaurant
                     dispatcher,
                     cook1,
                     cook2,
-                    cook3
+                    cook3,
+                    midgetHouseHandler
                 });
 
             var waiter = new Waiter(publisher);
@@ -71,8 +77,9 @@ namespace Restaurant
             publisher.Subscribe(dispatcher);
             publisher.Subscribe(assistantManager);
             publisher.Subscribe(cashier);
-            
-            PlaceOrders(waiter, publisher);
+            publisher.Subscribe<OrderPlaced>(midgetHouse);
+
+            PlaceOrders(waiter);
 
             HandlePays(cashier);
 
@@ -121,11 +128,11 @@ namespace Restaurant
                 });
         }
 
-        private static void PlaceOrders(Waiter waiter, TopicBasedPubSub publisher)
+        private static void PlaceOrders(Waiter waiter)
         {
             for (var i = 0; i < 200; i++)
             {
-                var correlationId = waiter.PlaceOrder(
+                waiter.PlaceOrder(
                 i,
                 new List<string>
                 {
@@ -144,8 +151,7 @@ namespace Restaurant
                     "wine",
                     "wine"
                 });
-
-                publisher.SubscribeByTopic(correlationId, new Printer());
+                
             }
         }
     }

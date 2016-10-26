@@ -17,24 +17,16 @@ namespace Restaurant.Infrastructure
         {
             while (true)
             {
-                var managedToDispatch = false;
-
                 foreach (var queuedHandler in _queuedHandlers)
                 {
                     if (queuedHandler.QueueLength < 5)
                     {
-                        managedToDispatch = true;
                         queuedHandler.Handle(message);
+                        return;
                     }
                 }
 
-                if (!managedToDispatch)
-                {
-                    Thread.Sleep(200);
-                    continue;
-                }
-
-                break;
+                Thread.Sleep(200);
             }
         }
     }
