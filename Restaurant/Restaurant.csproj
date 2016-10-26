@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Messages\CookFood.cs" />
     <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\OrderCompleted.cs" />
     <Compile Include="Messages\OrderCooked.cs" />
     <Compile Include="Messages\OrderPaid.cs" />
     <Compile Include="Messages\OrderPlaced.cs" />
@@ -64,6 +66,8 @@
     <Compile Include="Infrastructure\RoundRobinDispatch.cs" />
     <Compile Include="Infrastructure\TopicBasedPubSub.cs" />
     <Compile Include="Infrastructure\TTLHandler.cs" />
+    <Compile Include="Messages\PriceOrdered.cs" />
+    <Compile Include="Messages\TakePayment.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\Recipe.cs" />

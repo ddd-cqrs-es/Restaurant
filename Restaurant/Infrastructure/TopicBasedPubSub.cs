@@ -33,11 +33,23 @@ namespace Restaurant.Infrastructure
             SubscribeByTopic(typeof(T).ToString(), subscriber);
         }
 
+        public void Unsubscribe<T>(string topic, IHandler<T> subscriber)
+        {
+            lock (_lock)
+            {
+                var key = topic;
+                
+                if (_subscribers.ContainsKey(key))
+                {
+                    _subscribers[key].Remove(subscriber);
+                }
+            }
+        }
+
         public void SubscribeByTopic<T>(string topic, IHandler<T> subscriber)
         {
             lock (_lock)
             {
-
                 var key = topic;
 
                 if (_subscribers.ContainsKey(key))
