@@ -18,6 +18,7 @@ namespace Restaurant.Workers
         {
             _publisher = publisher;
         }
+
         public void Handle(TakePayment message)
         {
             _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), message);
@@ -28,7 +29,7 @@ namespace Restaurant.Workers
             var orderPriced = _outstandingOrders[orderId];
             orderPriced.Order.Paid = true;
 
-            OrderPriced removedOrder;
+            TakePayment removedOrder;
             _outstandingOrders.TryRemove(orderId, out removedOrder);
             _publisher.Publish(new OrderPaid(removedOrder.Order, removedOrder.MessageId));
         }

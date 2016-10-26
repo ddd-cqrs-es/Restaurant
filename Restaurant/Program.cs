@@ -18,26 +18,26 @@ namespace Restaurant
             var publisher = new TopicBasedPubSub();
 
             var cashier = new Cashier(publisher);
-            var cashierQueue = new QueuedHandler<OrderPriced>("Cashier", cashier);
-            var assistantManager = new QueuedHandler<OrderCooked>("AssistantManager", new AssistantManager(publisher));
+            var cashierQueue = new QueuedHandler<TakePayment>("Cashier", cashier);
+            var assistantManager = new QueuedHandler<PriceOrdered>("AssistantManager", new AssistantManager(publisher));
 
             var seed = new Random(DateTime.Now.Millisecond);
 
-            var cook1 = new QueuedHandler<OrderPlaced>(
+            var cook1 = new QueuedHandler<CookFood>(
                 "BogdanQueue",
-                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), publisher)));
-            var cook2 = new QueuedHandler<OrderPlaced>(
+                new TTLHandler<CookFood>(new Cook(seed.Next(1000), publisher)));
+            var cook2 = new QueuedHandler<CookFood>(
                 "RomanQueue",
-                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), publisher)));
-            var cook3 = new QueuedHandler<OrderPlaced>(
+                new TTLHandler<CookFood>(new Cook(seed.Next(1000), publisher)));
+            var cook3 = new QueuedHandler<CookFood>(
                 "WaclawQueue",
-                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), publisher)));
+                new TTLHandler<CookFood>(new Cook(seed.Next(1000), publisher)));
 
-            var dispatcher = new QueuedHandler<OrderPlaced>(
+            var dispatcher = new QueuedHandler<CookFood>(
                 "MFDispatcher",
-                new TTLHandler<OrderPlaced>(
-                    new MFDispatcher<OrderPlaced>(
-                        new List<QueuedHandler<OrderPlaced>>
+                new TTLHandler<CookFood>(
+                    new MFDispatcher<CookFood>(
+                        new List<QueuedHandler<CookFood>>
                         {
                             cook1,
                             cook2,
