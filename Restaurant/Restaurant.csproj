@@ -78,6 +78,8 @@
     <Compile Include="Workers\Cashier.cs" />
     <Compile Include="Workers\Cook.cs" />
     <Compile Include="Workers\DogyMidget.cs" />
+    <Compile Include="Workers\IMidget.cs" />
+    <Compile Include="Workers\MidgetFactory.cs" />
     <Compile Include="Workers\MidgetHouse.cs" />
     <Compile Include="Workers\RegularMidget.cs" />
     <Compile Include="Workers\Waiter.cs" />

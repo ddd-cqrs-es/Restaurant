@@ -5,9 +5,9 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class DogyMidget : IHandler<Message>
+    public class DogyMidget : IMidget
     {
-        public Action<string> CleanUp;
+        public Action<string> CleanUp { get; set; }
         private readonly IPublisher _publisher;
 
         public DogyMidget(IPublisher publisher)

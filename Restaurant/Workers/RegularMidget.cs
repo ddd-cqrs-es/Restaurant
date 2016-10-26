@@ -5,9 +5,9 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class RegularMidget : IHandler<Message>
+    public class RegularMidget : IMidget
     {
-        public Action<string> CleanUp;
+        public Action<string> CleanUp { get; set; }
         private readonly IPublisher _publisher;
 
         public RegularMidget(IPublisher publisher)
