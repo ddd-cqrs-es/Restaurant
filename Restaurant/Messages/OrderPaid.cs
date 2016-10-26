@@ -1,6 +1,4 @@
-﻿using System;
-using Restaurant.Infrastructure.Abstract;
-using Restaurant.Models;
+﻿using Restaurant.Models;
 
 namespace Restaurant.Messages
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using Restaurant.Models;
+﻿using Restaurant.Models;
 
 namespace Restaurant.Messages
 {
