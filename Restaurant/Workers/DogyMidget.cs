@@ -5,12 +5,12 @@ using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Workers
 {
-    public class Midget : IHandler<Message>
+    public class DogyMidget : IHandler<Message>
     {
         public Action<string> CleanUp;
         private readonly IPublisher _publisher;
 
-        public Midget(IPublisher publisher)
+        public DogyMidget(IPublisher publisher)
         {
             _publisher = publisher;
         }

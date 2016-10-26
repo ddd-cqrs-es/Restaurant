@@ -9,7 +9,7 @@ namespace Restaurant.Workers
     public class MidgetHouse : IHandler<OrderPlaced>, IHandler<Message>
     {
         private readonly IPublisher _publisher;
-        private readonly Dictionary<string, Midget> _midgets = new Dictionary<string, Midget>();
+        private readonly Dictionary<string, DogyMidget> _midgets = new Dictionary<string, DogyMidget>();
 
         public MidgetHouse(IPublisher publisher)
         {
@@ -20,7 +20,7 @@ namespace Restaurant.Workers
 
         public void Handle(OrderPlaced orderPlaced)
         {
-            var midget = new Midget(_publisher)
+            var midget = new DogyMidget(_publisher)
             {
                 CleanUp = corId => _midgets.Remove(corId)
             };
