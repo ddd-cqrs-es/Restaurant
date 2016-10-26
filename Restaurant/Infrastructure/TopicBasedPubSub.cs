@@ -28,12 +28,12 @@ namespace Restaurant.Infrastructure
             }
         }
 
-        public void Subscribe<T>(IHandler<T> subscriber) where T : Message
+        public void Subscribe<T>(IHandler<T> subscriber)
         {
             SubscribeByTopic(typeof(T).ToString(), subscriber);
         }
 
-        public void SubscribeByTopic<T>(string topic, IHandler<T> subscriber) where T : Message
+        public void SubscribeByTopic<T>(string topic, IHandler<T> subscriber)
         {
             lock (_lock)
             {
