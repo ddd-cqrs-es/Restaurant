@@ -25,11 +25,12 @@ namespace Restaurant.Workers
             _publisher = publisher;
         }
 
-        public void PlaceOrder(int tableNumber, List<string> items)
+        public void PlaceOrder(int tableNumber, List<string> items, bool isDodgy)
         {
             var order = new Order
             {
                 TableNumber = tableNumber,
+                IsDodgy = isDodgy,
                 Items = items
                             .GroupBy(item => item)
                             .Select(

@@ -10,6 +10,8 @@ namespace Restaurant.Models
 {
     public class Order
     {
+        public bool IsDodgy { get; set; }
+
         private readonly JsonSerializer _serializer = new JsonSerializer()
         {
             Formatting = Formatting.None,

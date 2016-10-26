@@ -149,7 +149,8 @@ namespace Restaurant
                     "wine",
                     "wine",
                     "wine"
-                });
+                },
+                (i % 2 == 0));
                 
             }
         }
