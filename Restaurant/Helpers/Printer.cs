@@ -1,13 +1,14 @@
-﻿using Restaurant.Workers.Abstract;
-using Restaurant.Events;
+﻿using System;
+using Restaurant.Messages;
+using Restaurant.Workers.Abstract;
 
 namespace Restaurant.Helpers
 {
-    public class Printer : IHandler<OrderPaid>
+    public class Printer : IHandler<Message>
     {
-        public void Handle(OrderPaid orderPaid)
+        public void Handle(Message message)
         {
-            //Console.WriteLine(orderPaid.Order.ToJsonString());
+            Console.WriteLine($"MessageId: {message.MessageId} CorrelationId:{message.CorrelationId} CausationId:{message.CausationId} ");
         }
     }
 }

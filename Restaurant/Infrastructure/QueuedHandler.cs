@@ -13,7 +13,7 @@ namespace Restaurant.Infrastructure
 
         private readonly IHandler<T> _handler;
 
-        public string Name { get; }
+        private string Name { get; }
 
         public int QueueLength => _queue.Count;
 
@@ -25,9 +25,9 @@ namespace Restaurant.Infrastructure
             Name = name;
         }
 
-        public void Handle(T orderPaid)
+        public void Handle(T message)
         {
-            _queue.Enqueue(orderPaid);
+            _queue.Enqueue(message);
         }
 
         public async void Start()
@@ -55,10 +55,5 @@ namespace Restaurant.Infrastructure
         {
             Console.WriteLine($"{Name} - {QueueLength}");
         }
-    }
-
-    public interface IPrintable
-    {
-        void Print();
     }
 }

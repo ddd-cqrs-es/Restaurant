@@ -2,6 +2,6 @@
 {
     public interface IHandler<in T>
     {
-        void Handle(T orderPaid);
+        void Handle(T message);
     }
 }

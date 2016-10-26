@@ -1,19 +1,16 @@
-﻿using System;
-using Restaurant.Models;
+﻿using Restaurant.Models;
 using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;
+using Restaurant.Messages;
 
 namespace Restaurant.Workers
 {
     public class Cook : IHandler<OrderPlaced>
     {
-        private static readonly Random Seed = new Random(DateTime.Now.Millisecond);
-        private readonly string _name;
-        private readonly IPublisher _orderPublisher;
+        private readonly IPublisher _publisher;
         private readonly Recipe[] _cookBook = {
             new Recipe
             {
@@ -39,33 +36,27 @@ namespace Restaurant.Workers
             }
         };
 
-        private int _time;
+        private readonly int _time;
 
-        public Cook(int time, string name, IPublisher orderPublisher)
+        public Cook(int time, IPublisher publisher)
         {
             _time = time;
-            _name = name;
-            _orderPublisher = orderPublisher;
+            _publisher = publisher;
         }
 
-        public void Handle(OrderPlaced orderPaid)
+        public void Handle(OrderPlaced message)
         {
-            foreach (var item in orderPaid.Order.Items)
+            foreach (var item in message.Order.Items)
             {
-                var recipe = _cookBook.SingleOrDefault(c => c.DishName == item.Description);
-
-                if (recipe == null)
-                {
-                    
-                }
+                var recipe = _cookBook.Single(c => c.DishName == item.Description);
                 
                 Thread.Sleep(_time);
 
-                orderPaid.Order.AddIngredients(recipe.Ingredients);
-                orderPaid.Order.TimeToCookMs += _time;
+                message.Order.AddIngredients(recipe.Ingredients);
+                message.Order.TimeToCookMs += _time;
             }
 
-            _orderPublisher.Publish(new OrderCooked(orderPaid.Order));
+            _publisher.Publish(new OrderCooked(message.Order, message.MessageId));
         }
     }
 }

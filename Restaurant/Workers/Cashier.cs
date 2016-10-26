@@ -3,50 +3,39 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Restaurant.Events;
 using Restaurant.Infrastructure.Abstract;
+using Restaurant.Messages;
 
 namespace Restaurant.Workers
 {
     public class Cashier : IHandler<OrderPriced>
     {
-        private readonly ConcurrentDictionary<string, OrderPriced> _outstandingOrders = new ConcurrentDictionary<string, OrderPriced>();
-        private readonly IPublisher _orderPublisher;
+        private readonly ConcurrentDictionary<string, OrderPriced> _outstandingOrders =
+            new ConcurrentDictionary<string, OrderPriced>();
+        private readonly IPublisher _publisher;
 
-        public Cashier(IPublisher orderPublisher)
+        public Cashier(IPublisher publisher)
         {
-            _orderPublisher = orderPublisher;
+            _publisher = publisher;
         }
-        public void Handle(OrderPriced orderPaid) 
+        public void Handle(OrderPriced message)
         {
-            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), orderPaid);
+            _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), message);
         }
 
         public void Pay(string orderId)
         {
-            Thread.Sleep(100);
-
             var orderPriced = _outstandingOrders[orderId];
             orderPriced.Order.Paid = true;
 
             OrderPriced removedOrder;
             _outstandingOrders.TryRemove(orderId, out removedOrder);
-            _orderPublisher.Publish(new OrderPaid(removedOrder.Order));
+            _publisher.Publish(new OrderPaid(removedOrder.Order, removedOrder.MessageId));
         }
 
         public IEnumerable<string> GetOutstandingOrders()
         {
-            try
-            {
-                return _outstandingOrders.Keys.Select(x => x).ToList();
-            }
-            catch (Exception e)
-            {
-                
-                Console.WriteLine(e);
-                return new List<string>();
-            }
+            return _outstandingOrders.Keys.Select(x => x).ToList();
         }
     }
 }

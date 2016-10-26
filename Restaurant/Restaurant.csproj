@@ -47,17 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\Event.cs" />
-    <Compile Include="Events\OrderCooked.cs" />
-    <Compile Include="Events\OrderPaid.cs" />
-    <Compile Include="Events\OrderPlaced.cs" />
-    <Compile Include="Events\OrderPriced.cs" />
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\OrderCooked.cs" />
+    <Compile Include="Messages\OrderPaid.cs" />
+    <Compile Include="Messages\OrderPlaced.cs" />
+    <Compile Include="Messages\OrderPriced.cs" />
     <Compile Include="Helpers\Getter.cs" />
     <Compile Include="Helpers\Printer.cs" />
+    <Compile Include="Infrastructure\Abstract\IPrintable.cs" />
     <Compile Include="Infrastructure\Abstract\IPublisher.cs" />
     <Compile Include="Infrastructure\Abstract\IStartable.cs" />
+    <Compile Include="Infrastructure\Abstract\ITTLMessage.cs" />
     <Compile Include="Infrastructure\FanOut.cs" />
-    <Compile Include="Infrastructure\ITTLHandler.cs" />
     <Compile Include="Infrastructure\MFDispatcher.cs" />
     <Compile Include="Infrastructure\QueuedHandler.cs" />
     <Compile Include="Infrastructure\RoundRobinDispatch.cs" />
@@ -72,7 +73,6 @@
     <Compile Include="Workers\AssistantManager.cs" />
     <Compile Include="Workers\Cashier.cs" />
     <Compile Include="Workers\Cook.cs" />
-    <Compile Include="Workers\Topics.cs" />
     <Compile Include="Workers\Waiter.cs" />
   </ItemGroup>
   <ItemGroup>

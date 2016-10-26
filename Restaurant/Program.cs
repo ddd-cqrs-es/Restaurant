@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Restaurant.Events;
 using Restaurant.Infrastructure;
 using Restaurant.Infrastructure.Abstract;
+using Restaurant.Messages;
 
 namespace Restaurant
 {
@@ -24,35 +24,84 @@ namespace Restaurant
             var seed = new Random(DateTime.Now.Millisecond);
 
             var cook1 = new QueuedHandler<OrderPlaced>(
-                "Bogdan",
-                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Bogdan", publisher)));
+                "BogdanQueue",
+                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), publisher)));
             var cook2 = new QueuedHandler<OrderPlaced>(
-                "Roman",
-                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Roman", publisher)));
+                "RomanQueue",
+                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), publisher)));
             var cook3 = new QueuedHandler<OrderPlaced>(
-                "Waclaw",
-                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), "Waclaw", publisher)));
+                "WaclawQueue",
+                new TTLHandler<OrderPlaced>(new Cook(seed.Next(1000), publisher)));
 
-            var dispatcher = new QueuedHandler<OrderPlaced>("MFDispatcher", new TTLHandler<OrderPlaced>(new MFDispatcher<OrderPlaced>(new List<QueuedHandler<OrderPlaced>> { cook1, cook2, cook3 })));
-            
-            StartQueues(new List<IStartable> { assistantManager, cashierQueue, dispatcher, cook1, cook2, cook3 });
-            StartQueuePrinter(new List<IPrintable> { assistantManager, cashierQueue, dispatcher, cook1, cook2, cook3 });
+            var dispatcher = new QueuedHandler<OrderPlaced>(
+                "MFDispatcher",
+                new TTLHandler<OrderPlaced>(
+                    new MFDispatcher<OrderPlaced>(
+                        new List<QueuedHandler<OrderPlaced>>
+                        {
+                            cook1,
+                            cook2,
+                            cook3
+                        })));
+
+            StartQueues(
+                new List<IStartable>
+                {
+                    assistantManager,
+                    cashierQueue,
+                    dispatcher,
+                    cook1,
+                    cook2,
+                    cook3
+                });
+            StartQueuePrinter(
+                new List<IPrintable>
+                {
+                    assistantManager,
+                    cashierQueue,
+                    dispatcher,
+                    cook1,
+                    cook2,
+                    cook3
+                });
 
             var waiter = new Waiter(publisher);
 
+            
             publisher.Subscribe(dispatcher);
             publisher.Subscribe(assistantManager);
             publisher.Subscribe(cashier);
-            publisher.Subscribe(new Printer());
+            //publisher.Subscribe(new Printer());
 
-            PlaceOrders(waiter);
+            var correlationId = waiter.PlaceOrder(
+                1,
+                new List<string>
+                {
+                    "pizza",
+                    "pizza",
+                    "pizza",
+                    "pizza",
+                    "pasta",
+                    "pasta",
+                    "pasta",
+                    "pasta",
+                    "wine",
+                    "wine",
+                    "wine",
+                    "wine",
+                    "wine",
+                    "wine"
+                });
+
+            publisher.SubscribeByTopic(correlationId, new Printer());
+            //PlaceOrders(waiter);
 
             HandlePays(cashier);
 
             Console.ReadKey();
         }
 
-        private static void StartQueues(List<IStartable> queues)
+        private static void StartQueues(IEnumerable<IStartable> queues)
         {
             foreach (var queue in queues)
             {
@@ -85,7 +134,7 @@ namespace Restaurant
                 {
                     while (true)
                     {
-                        Thread.Sleep(500);
+                        Thread.Sleep(1000);
                         foreach (var queue in queues)
                         {
                             queue.Print();

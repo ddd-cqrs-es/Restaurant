@@ -5,11 +5,10 @@ using Newtonsoft.Json.Serialization;
 using Restaurant.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Restaurant.Infrastructure;
 
 namespace Restaurant.Models
 {
-    public class Order: ITTLMessage
+    public class Order
     {
         private readonly JsonSerializer _serializer = new JsonSerializer()
         {
@@ -71,7 +70,13 @@ namespace Restaurant.Models
             _jsonOrder = JObject.Parse(json);
 
             ShoulBeProcessesdBefore = DateTime.Now;
+
+            Id = Guid.NewGuid().ToString();
         }
+
+        public string Id { get; private set; }
+
+        public DateTime ShoulBeProcessesdBefore { get; private set; }
 
         public void AddItem(OrderItem orderItem)
         {
@@ -105,7 +110,5 @@ namespace Restaurant.Models
         {
             return JObject.FromObject(this, _serializer).ToString();
         }
-
-        public DateTime ShoulBeProcessesdBefore { get; set; }
     }
 }
