@@ -14,7 +14,7 @@ namespace Restaurant.Tests
         public void ShouldPublish_CookFood_When_OrderPlaced_Received()
         {
             var publisherMock = new Mock<IPublisher>();
-            var midget = new DogyMidget(publisherMock.Object);
+            var midget = new RegularMidget(publisherMock.Object);
 
             midget.Handle(new OrderPlaced(new Order(), string.Empty));
 
@@ -25,7 +25,7 @@ namespace Restaurant.Tests
         public void ShouldPublish_PriceOrdered_When_OrderCooked_Received()
         {
             var publisherMock = new Mock<IPublisher>();
-            var midget = new DogyMidget(publisherMock.Object);
+            var midget = new RegularMidget(publisherMock.Object);
 
             midget.Handle(new OrderCooked(new Order(), string.Empty));
 
@@ -36,7 +36,7 @@ namespace Restaurant.Tests
         public void ShouldPublish_TakePayment_When_OrderPriced_Received()
         {
             var publisherMock = new Mock<IPublisher>();
-            var midget = new DogyMidget(publisherMock.Object);
+            var midget = new RegularMidget(publisherMock.Object);
 
             midget.Handle(new OrderPriced(new Order(), string.Empty));
 
@@ -47,7 +47,7 @@ namespace Restaurant.Tests
         public void ShouldCleanUp_When_OrderPaid_Received()
         {
             var publisherMock = new Mock<IPublisher>();
-            var midget = new DogyMidget(publisherMock.Object)
+            var midget = new RegularMidget(publisherMock.Object)
             {
                 CleanUp = corrId => corrId.SequenceEqual("corrId")
             };
