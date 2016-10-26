@@ -3,6 +3,7 @@ using Restaurant.Workers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using Restaurant.Infrastructure;
@@ -71,30 +72,8 @@ namespace Restaurant
             publisher.Subscribe(dispatcher);
             publisher.Subscribe(assistantManager);
             publisher.Subscribe(cashier);
-            //publisher.Subscribe(new Printer());
-
-            var correlationId = waiter.PlaceOrder(
-                1,
-                new List<string>
-                {
-                    "pizza",
-                    "pizza",
-                    "pizza",
-                    "pizza",
-                    "pasta",
-                    "pasta",
-                    "pasta",
-                    "pasta",
-                    "wine",
-                    "wine",
-                    "wine",
-                    "wine",
-                    "wine",
-                    "wine"
-                });
-
-            publisher.SubscribeByTopic(correlationId, new Printer());
-            //PlaceOrders(waiter);
+            
+            PlaceOrders(waiter, publisher);
 
             HandlePays(cashier);
 
@@ -143,31 +122,32 @@ namespace Restaurant
                 });
         }
 
-        private static void PlaceOrders(Waiter waiter)
+        private static void PlaceOrders(Waiter waiter, TopicBasedPubSub publisher)
         {
             for (var i = 0; i < 200; i++)
             {
-                waiter.PlaceOrder(
-               i,
-               new List<string>
-               {
-                        "pizza",
-                        "pizza",
-                        "pizza",
-                        "pizza",
-                        "pasta",
-                        "pasta",
-                        "pasta",
-                        "pasta",
-                        "wine",
-                        "wine",
-                        "wine",
-                        "wine",
-                        "wine",
-                        "wine"
-               });
-            }
+                var correlationId = waiter.PlaceOrder(
+                i,
+                new List<string>
+                {
+                    "pizza",
+                    "pizza",
+                    "pizza",
+                    "pizza",
+                    "pasta",
+                    "pasta",
+                    "pasta",
+                    "pasta",
+                    "wine",
+                    "wine",
+                    "wine",
+                    "wine",
+                    "wine",
+                    "wine"
+                });
 
+                publisher.SubscribeByTopic(correlationId, new Printer());
+            }
         }
     }
 }

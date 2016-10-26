@@ -42,7 +42,11 @@ namespace Restaurant.Workers
                             .ToList()
             };
 
-            _orderPublisher.Publish(new OrderPlaced(order, Guid.Empty.ToString()));
+            Task.Run(
+                () =>
+                {
+                    _orderPublisher.Publish(new OrderPlaced(order, Guid.Empty.ToString()));
+                });
 
             return order.Id;
         }
