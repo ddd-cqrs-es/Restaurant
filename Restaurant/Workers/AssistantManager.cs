@@ -6,7 +6,7 @@ using Restaurant.Messages;
 
 namespace Restaurant.Workers
 {
-    public class AssistantManager : IHandler<OrderCooked>
+    public class AssistantManager : IHandler<PriceOrdered>
     {
         private readonly IPublisher _publisher;
 
@@ -23,7 +23,7 @@ namespace Restaurant.Workers
             _publisher = publisher;
         }
 
-        public void Handle(OrderCooked message)
+        public void Handle(PriceOrdered message)
         {
             message.Order.Tax = message.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
             message.Order.Total = message.Order.Items.Sum(item => item.Price * item.Quantity);

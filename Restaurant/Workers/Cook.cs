@@ -8,7 +8,7 @@ using Restaurant.Messages;
 
 namespace Restaurant.Workers
 {
-    public class Cook : IHandler<OrderPlaced>
+    public class Cook : IHandler<CookFood>
     {
         private readonly IPublisher _publisher;
         private readonly Recipe[] _cookBook = {
@@ -44,7 +44,7 @@ namespace Restaurant.Workers
             _publisher = publisher;
         }
 
-        public void Handle(OrderPlaced message)
+        public void Handle(CookFood message)
         {
             foreach (var item in message.Order.Items)
             {

@@ -8,17 +8,17 @@ using Restaurant.Messages;
 
 namespace Restaurant.Workers
 {
-    public class Cashier : IHandler<OrderPriced>
+    public class Cashier : IHandler<TakePayment>
     {
-        private readonly ConcurrentDictionary<string, OrderPriced> _outstandingOrders =
-            new ConcurrentDictionary<string, OrderPriced>();
+        private readonly ConcurrentDictionary<string, TakePayment> _outstandingOrders =
+            new ConcurrentDictionary<string, TakePayment>();
         private readonly IPublisher _publisher;
 
         public Cashier(IPublisher publisher)
         {
             _publisher = publisher;
         }
-        public void Handle(OrderPriced message)
+        public void Handle(TakePayment message)
         {
             _outstandingOrders.TryAdd(Guid.NewGuid().ToString(), message);
         }
