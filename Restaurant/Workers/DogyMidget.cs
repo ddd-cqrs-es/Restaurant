@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Restaurant.Infrastructure.Abstract;
 using Restaurant.Messages;
 using Restaurant.Workers.Abstract;
@@ -19,12 +20,12 @@ namespace Restaurant.Workers
         {
             if (message is OrderPlaced)
             {
-                _publisher.Publish(new CookFood(((OrderPlaced)message).Order, message.MessageId));
+                _publisher.Publish(new PriceOrdered(((OrderPlaced)message).Order, message.MessageId));
             }
 
             if (message is OrderCooked)
             {
-                _publisher.Publish(new PriceOrdered(((OrderCooked)message).Order, message.MessageId));
+                CleanUp(message.CorrelationId);
             }
 
             if (message is OrderPriced)
@@ -34,7 +35,7 @@ namespace Restaurant.Workers
 
             if (message is OrderPaid)
             {
-                CleanUp(message.CorrelationId);
+                _publisher.Publish(new CookFood(((OrderPaid)message).Order, message.MessageId));
             }
         }
     }
