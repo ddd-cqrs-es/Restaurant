@@ -21,15 +21,23 @@ namespace Restaurant.Workers
         public void Handle(OrderPlaced orderPlaced)
         {
             var midget = MidgetFactory.CreateMidget(orderPlaced.Order, _publisher);
-            midget.CleanUp = corId => _midgets.Remove(corId);
+            midget.CleanUp = Remove;
             _midgets.Add(orderPlaced.CorrelationId, midget);
 
             _publisher.SubscribeByTopic(orderPlaced.CorrelationId, QueuedHandler);
         }
 
+        private void Remove(string correlationId)
+        {
+            _midgets.Remove(correlationId);
+        }
+
         public void Handle(Message message)
         {
-            _midgets[message.CorrelationId].Handle(message);
+            if (!(message is DuplicateOrder))
+            {
+                _midgets[message.CorrelationId].Handle(message);
+            }
         }
     }
 }

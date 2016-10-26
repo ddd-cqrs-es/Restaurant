@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Messages\CookFood.cs" />
     <Compile Include="Messages\DuplicateOrder.cs" />
+    <Compile Include="Messages\FutureMessage.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\OrderCompleted.cs" />
     <Compile Include="Messages\OrderCooked.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Workers\Abstract\IHandler.cs" />
+    <Compile Include="Workers\AlarmClock.cs" />
     <Compile Include="Workers\AssistantManager.cs" />
     <Compile Include="Workers\Cashier.cs" />
     <Compile Include="Workers\Cook.cs" />

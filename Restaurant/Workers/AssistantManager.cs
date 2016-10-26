@@ -1,4 +1,5 @@
-﻿using Restaurant.Workers.Abstract;
+﻿using System;
+using Restaurant.Workers.Abstract;
 using System.Collections.Generic;
 using System.Linq;
 using Restaurant.Infrastructure.Abstract;
@@ -18,6 +19,8 @@ namespace Restaurant.Workers
             { "wine", 1.5m }
         };
 
+        private readonly Dictionary<string, Message> _processedMessages = new Dictionary<string, Message>();
+         
         public AssistantManager(IPublisher publisher)
         {
             _publisher = publisher;
@@ -25,6 +28,14 @@ namespace Restaurant.Workers
 
         public void Handle(PriceOrdered message)
         {
+            if (_processedMessages.ContainsKey(message.MessageId))
+            {
+                _publisher.Publish(new DuplicateOrder(DateTime.MaxValue, message.CorrelationId, message.MessageId));
+                return;
+            }
+
+            _processedMessages.Add(message.MessageId, message);
+
             message.Order.Tax = message.Order.Items.Sum(item => _calculationRules[item.Description] * item.Quantity);
             message.Order.Total = message.Order.Items.Sum(item => item.Price * item.Quantity);
 

@@ -73,10 +73,10 @@ namespace Restaurant.Models
 
             ShoulBeProcessesdBefore = DateTime.Now;
 
-            Id = Guid.NewGuid().ToString();
+            //Id = Guid.NewGuid().ToString();
         }
 
-        public string Id { get; private set; }
+        public string Id => TableNumber.ToString();
 
         public DateTime ShoulBeProcessesdBefore { get; private set; }
 

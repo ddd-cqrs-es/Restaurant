@@ -16,13 +16,14 @@ namespace Restaurant
         {
             var publisher = new TopicBasedPubSub();
 
+            var alarmClock = new AlarmClock(publisher);
             var midgetHouse = new MidgetHouse(publisher);
             var midgetHouseHandler = new QueuedHandler<Message>("MidgetHouse", midgetHouse);
             midgetHouse.QueuedHandler = midgetHouseHandler;
 
             var cashier = new Cashier(publisher);
             var cashierQueue = new QueuedHandler<TakePayment>("Cashier", cashier);
-            var assistantManager = new QueuedHandler<PriceOrdered>("AssistantManager", new AssistantManager(publisher));
+            var assistantManager = new QueuedHandler<PriceOrdered>("AssistantManager", new FuzzyHandler<PriceOrdered>(new AssistantManager(publisher), 0, 20));
 
             var seed = new Random(DateTime.Now.Millisecond);
 
@@ -56,7 +57,8 @@ namespace Restaurant
                     cook1,
                     cook2,
                     cook3,
-                    midgetHouseHandler
+                    midgetHouseHandler,
+                    alarmClock
                 });
             StartQueuePrinter(
                 new List<IPrintable>
@@ -71,11 +73,11 @@ namespace Restaurant
                 });
 
             var waiter = new Waiter(publisher);
-
             
             publisher.Subscribe(dispatcher);
             publisher.Subscribe(assistantManager);
             publisher.Subscribe(cashier);
+            publisher.Subscribe(alarmClock);
             publisher.Subscribe<OrderPlaced>(midgetHouse);
 
             PlaceOrders(waiter);
@@ -150,8 +152,7 @@ namespace Restaurant
                     "wine",
                     "wine"
                 },
-                (i % 2 == 0));
-                
+                i % 2 == 0);
             }
         }
     }

@@ -21,11 +21,11 @@ namespace Restaurant.Workers
         {
             var rnd = Random.Next(100);
           
-            if (rnd < _duplicateMessagePct)
-            {
-                _handler.Handle(message);
-                _handler.Handle(message);
-            }
+            //if (rnd < _duplicateMessagePct)
+            //{
+            //    _handler.Handle(message);
+            //    _handler.Handle(message);
+            //}
 
             if (rnd < _dropMessagePct)
             {
